@@ -9,8 +9,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.trackmybus.R
+import com.example.trackmybus.ui.theme.TrackMyBusTheme
 import kotlinx.coroutines.delay
 
 @Composable
@@ -27,5 +29,13 @@ fun splashscreen (onTimeout: () -> Unit){
             modifier = Modifier.size(200.dp))
 
 
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SplashScreenPreview() {
+    TrackMyBusTheme {
+        splashscreen(onTimeout = {})
     }
 }

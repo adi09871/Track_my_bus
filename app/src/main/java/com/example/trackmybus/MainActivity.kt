@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.trackmybus.ui.theme.TrackMyBusTheme
-import com.example.trackmybus.userinterface.optionscreen
+import com.example.trackmybus.userinterface.OptionScreen
 import com.example.trackmybus.userinterface.splashscreen
 
 class MainActivity : ComponentActivity() {
@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable("optionscreen") {
-                        optionscreen()
+                        OptionScreen()
                     }
                 }
             }
