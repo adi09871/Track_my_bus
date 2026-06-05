@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.trackmybus.ui.theme.TrackMyBusTheme
 import com.example.trackmybus.userinterface.OptionScreen
 import com.example.trackmybus.userinterface.splashscreen
+import com.example.trackmybus.userinterface.studentlogin
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,7 +22,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = "splashscreen"
+                    startDestination = "studentlogin"
                 ) {
                     composable("splashscreen") {
                         splashscreen(onTimeout = {
@@ -33,6 +34,10 @@ class MainActivity : ComponentActivity() {
 
                     composable("optionscreen") {
                         OptionScreen()
+                    }
+
+                    composable("studentlogin") {
+                        studentlogin()
                     }
                 }
             }
