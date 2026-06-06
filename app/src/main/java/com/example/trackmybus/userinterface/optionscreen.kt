@@ -1,6 +1,5 @@
 package com.example.trackmybus.userinterface
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -24,9 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.trackmybus.R
 
-@Preview(showBackground = true)
 @Composable
-fun OptionScreen() {
+fun OptionScreen(onStudentClick: () -> Unit, onDriverClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -90,7 +87,7 @@ fun OptionScreen() {
             icon = Icons.Default.Person,
             iconBgColor = Color(0xFFE3F2FD),
             iconTint = Color(0xFF0061D5),
-            onClick = { }
+            onClick = onStudentClick
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -101,11 +98,17 @@ fun OptionScreen() {
             icon = Icons.Default.DirectionsBus,
             iconBgColor = Color(0xFFE3F2FD),
             iconTint = Color(0xFF0061D5),
-            onClick = { }
+            onClick = onDriverClick
         )
 
         Spacer(modifier = Modifier.height(48.dp))
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun OptionScreenPreview() {
+    OptionScreen(onStudentClick = {}, onDriverClick = {})
 }
 
 @Composable

@@ -1,7 +1,11 @@
 package com.example.trackmybus.userinterface
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+
+
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,20 +16,15 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,7 +32,7 @@ import com.example.trackmybus.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StudentLogin(onBackClick: () -> Unit) {
+fun DriverLogin(onBackClick: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -64,20 +63,26 @@ fun StudentLogin(onBackClick: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-
+        Text(
+            text = "DRIVER PORTAL",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Gray,
+            letterSpacing = 1.sp
+        )
 
         Spacer(modifier = Modifier.height(40.dp))
 
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Welcome back",
+                text = "Driver sign in",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Sign in to track your college bus",
+                text = "Use your work email and password",
                 fontSize = 16.sp,
                 color = Color.Gray
             )
@@ -87,7 +92,7 @@ fun StudentLogin(onBackClick: () -> Unit) {
 
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "College email",
+                text = "Email",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color.Gray
@@ -97,7 +102,7 @@ fun StudentLogin(onBackClick: () -> Unit) {
                 value = email,
                 onValueChange = { email = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("you@college.edu") },
+                placeholder = { Text("driver@college.edu") },
                 leadingIcon = {
                     Icon(imageVector = Icons.Default.Email, contentDescription = null, tint = Color.Gray)
                 },
@@ -188,28 +193,12 @@ fun StudentLogin(onBackClick: () -> Unit) {
             modifier = Modifier.clickable { onBackClick() }
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        val footerText = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = Color.Gray)) {
-                append("Need help? Contact ")
-            }
-            withStyle(style = SpanStyle(color = Color(0xFF0061D5), fontWeight = FontWeight.Medium)) {
-                append("transport@college.edu")
-            }
-        }
-        Text(
-            text = footerText,
-            fontSize = 14.sp,
-            textAlign = TextAlign.Center
-        )
-
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun StudentLoginPreview() {
-    StudentLogin(onBackClick = {})
+fun DriverLoginPreview() {
+    DriverLogin(onBackClick = {})
 }
