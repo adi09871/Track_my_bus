@@ -1,132 +1,203 @@
 package com.example.trackmybus.userinterface
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import com.example.trackmybus.R
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.trackmybus.R
 
-@Preview(showBackground = true)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun studentlogin (
-
-
-){
-
+fun StudentLogin() {
     var email by remember { mutableStateOf("") }
-    Column(modifier = Modifier.fillMaxSize().background(Color(0xFFE1F5FE))
-        .padding(24.dp),horizontalAlignment = Alignment.CenterHorizontally) {
+    var password by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
 
-
-        Spacer(modifier = Modifier.size(60.dp))
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF8FBFF))
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(40.dp))
 
         Surface(
-            modifier = Modifier.size(100.dp), color = Color(0xFF0061D5),
-            shape = RoundedCornerShape(28.dp)
+            modifier = Modifier.size(80.dp),
+            color = Color(0xFF0061D5),
+            shape = RoundedCornerShape(24.dp)
         ) {
-            Box(contentAlignment = Alignment.Center)
-            {
+            Box(contentAlignment = Alignment.Center) {
                 Icon(
                     painter = painterResource(id = R.drawable.logo),
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(50.dp)
+                    modifier = Modifier.size(40.dp)
                 )
             }
-
         }
-        Spacer(modifier = Modifier.size(32.dp))
-        Text(
-            text = "Student Login",
-            color = Color.Black,
-            fontSize = 28.sp,
-            letterSpacing = 1.sp
-        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
 
-        Spacer(modifier = Modifier.size(16.dp))
+
+        Spacer(modifier = Modifier.height(40.dp))
 
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "Welcome back",
-                color = Color.Black,
-                fontSize = 30.sp,
-                letterSpacing = 0.5.sp,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
             )
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Please login to your account",
-                color = Color.Black,
-                fontSize = 18.sp,
-                letterSpacing = 0.5.sp,
-                textAlign =TextAlign.Left,
+                text = "Sign in to track your college bus",
+                fontSize = 16.sp,
+                color = Color.Gray
             )
         }
-        Spacer(modifier = Modifier.size(16.dp))
 
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Username",
-                color = Color.Black,
-                fontSize = 18.sp,
+                text = "College email",
+                fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                letterSpacing = 0.5.sp,
-                textAlign = TextAlign.Left,
+                color = Color.Gray
             )
-
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
-                value = email, onValueChange = {email = it }, modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text(text = "Enter your college email id ") },
+                value = email,
+                onValueChange = { email = it },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("you@college.edu") },
                 leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Email,
-    contentDescription = null,
-                        tint = Color(0xFF0061D5))
-                }, shape = RoundedCornerShape(8.dp),
+                    Icon(imageVector = Icons.Default.Email, contentDescription = null, tint = Color.Gray)
+                },
+                shape = RoundedCornerShape(20.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFF0061D5),
-                    unfocusedBorderColor = Color(0xFFCCCCCC)
-                ), singleLine = true,
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                    unfocusedBorderColor = Color(0xFFE0E0E0),
+                    focusedBorderColor = Color(0xFF0061D5)
+                ),
+                singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
             )
+        }
 
+        Spacer(modifier = Modifier.height(20.dp))
 
-    }}
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "Password",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.Gray
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("••••••••") },
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Lock, contentDescription = null, tint = Color.Gray)
+                },
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = null,
+                            tint = Color.Gray
+                        )
+                    }
+                },
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                shape = RoundedCornerShape(20.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                    unfocusedBorderColor = Color(0xFFE0E0E0),
+                    focusedBorderColor = Color(0xFF0061D5)
+                ),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+            )
+        }
 
+        Spacer(modifier = Modifier.height(12.dp))
 
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+            Text(
+                text = "Forgot password?",
+                color = Color(0xFF0061D5),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
 
+        Spacer(modifier = Modifier.height(32.dp))
 
+        Button(
+            onClick = { /* TODO */ },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(28.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0061D5))
+        ) {
+            Text(text = "Log in", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        }
 
+        Spacer(modifier = Modifier.weight(1f))
 
+        val footerText = buildAnnotatedString {
+            withStyle(style = SpanStyle(color = Color.Gray)) {
+                append("Need help? Contact ")
+            }
+            withStyle(style = SpanStyle(color = Color(0xFF0061D5), fontWeight = FontWeight.Medium)) {
+                append("transport@college.edu")
+            }
+        }
+        Text(
+            text = footerText,
+            fontSize = 14.sp,
+            textAlign = TextAlign.Center
+        )
 
+        Spacer(modifier = Modifier.height(24.dp))
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun StudentLoginPreview() {
+    StudentLogin()
+}
