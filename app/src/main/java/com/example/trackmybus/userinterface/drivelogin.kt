@@ -32,7 +32,7 @@ import com.example.trackmybus.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DriverLogin(onBackClick: () -> Unit) {
+fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -172,7 +172,7 @@ fun DriverLogin(onBackClick: () -> Unit) {
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { /* TODO */ },
+            onClick = { onLoginSuccess() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -200,5 +200,5 @@ fun DriverLogin(onBackClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun DriverLoginPreview() {
-    DriverLogin(onBackClick = {})
+    DriverLogin(onBackClick = {}, onLoginSuccess = {})
 }
