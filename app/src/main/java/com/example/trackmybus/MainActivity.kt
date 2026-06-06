@@ -125,8 +125,7 @@ class MainActivity : ComponentActivity() {
                     composable("driverhome") {
                         DriverHome(
                             onProfileClick = { /* TODO */ },
-                            onAlertsClick = { /* TODO */ },
-                            onRouteClick = { /* TODO */ }
+                            onTripClick = { /* TODO */ }
                         )
                     }
                 }
