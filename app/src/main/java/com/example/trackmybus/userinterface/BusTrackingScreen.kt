@@ -19,7 +19,12 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BusTrackingScreen(onBackClick: () -> Unit) {
+fun BusTrackingScreen(
+    onHomeClick: () -> Unit,
+    onAlertsClick: () -> Unit,
+    onProfileClick: () -> Unit,
+    onBackClick: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -44,6 +49,42 @@ fun BusTrackingScreen(onBackClick: () -> Unit) {
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
+        },
+        bottomBar = {
+            NavigationBar(
+                containerColor = Color.White,
+                tonalElevation = 8.dp
+            ) {
+                NavigationBarItem(
+                    selected = false,
+                    onClick = onHomeClick,
+                    icon = { Icon(Icons.Default.Home, contentDescription = null) },
+                    label = { Text("Home") }
+                )
+                NavigationBarItem(
+                    selected = true,
+                    onClick = { },
+                    icon = { Icon(Icons.Default.LocationOn, contentDescription = null) },
+                    label = { Text("Track") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color(0xFF0061D5),
+                        selectedTextColor = Color(0xFF0061D5),
+                        indicatorColor = Color(0xFFE3F2FD)
+                    )
+                )
+                NavigationBarItem(
+                    selected = false,
+                    onClick = onAlertsClick,
+                    icon = { Icon(Icons.Default.Notifications, contentDescription = null) },
+                    label = { Text("Alerts") }
+                )
+                NavigationBarItem(
+                    selected = false,
+                    onClick = onProfileClick,
+                    icon = { Icon(Icons.Default.Person, contentDescription = null) },
+                    label = { Text("Profile") }
+                )
+            }
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -175,5 +216,10 @@ fun TrackingInfoItem(modifier: Modifier, icon: ImageVector, label: String, value
 @Preview(showBackground = true)
 @Composable
 fun BusTrackingScreenPreview() {
-    BusTrackingScreen(onBackClick = {})
+    BusTrackingScreen(
+        onHomeClick = {},
+        onAlertsClick = {},
+        onProfileClick = {},
+        onBackClick = {}
+    )
 }

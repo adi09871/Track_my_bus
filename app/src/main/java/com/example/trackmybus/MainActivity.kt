@@ -14,6 +14,8 @@ import com.example.trackmybus.userinterface.OptionScreen
 import com.example.trackmybus.userinterface.AlertsScreen
 import com.example.trackmybus.userinterface.BusTrackingScreen
 import com.example.trackmybus.userinterface.DriverHome
+import com.example.trackmybus.userinterface.DriverLiveTripScreen
+import com.example.trackmybus.userinterface.DriverProfileScreen
 import com.example.trackmybus.userinterface.ProfileScreen
 import com.example.trackmybus.userinterface.StudentHome
 import com.example.trackmybus.userinterface.StudentLogin
@@ -94,7 +96,12 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable("bustracking") {
-                        BusTrackingScreen(onBackClick = { navController.popBackStack() })
+                        BusTrackingScreen(
+                            onHomeClick = { navController.navigate("studenthome") },
+                            onAlertsClick = { navController.navigate("alerts") },
+                            onProfileClick = { navController.navigate("profile") },
+                            onBackClick = { navController.popBackStack() }
+                        )
                     }
 
                     composable("alerts") {
@@ -124,8 +131,40 @@ class MainActivity : ComponentActivity() {
 
                     composable("driverhome") {
                         DriverHome(
-                            onProfileClick = { /* TODO */ },
-                            onTripClick = { /* TODO */ }
+                            onProfileClick = { navController.navigate("driverprofile") },
+                            onTripClick = { navController.navigate("drivertrip") }
+                        )
+                    }
+
+                    composable("drivertrip") {
+                        DriverLiveTripScreen(
+                            onBusClick = {
+                                navController.navigate("driverhome") {
+                                    popUpTo("driverhome") { inclusive = true }
+                                }
+                            },
+                            onProfileClick = { navController.navigate("driverprofile") },
+                            onBackClick = { navController.popBackStack() }
+                        )
+                    }
+
+                    composable("driverprofile") {
+                        DriverProfileScreen(
+                            onBusClick = {
+                                navController.navigate("driverhome") {
+                                    popUpTo("driverhome") { inclusive = true }
+                                }
+                            },
+                            onTripClick = {
+                                navController.navigate("drivertrip") {
+                                    popUpTo("driverhome") { inclusive = false }
+                                }
+                            },
+                            onLogoutClick = {
+                                navController.navigate("optionscreen") {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            }
                         )
                     }
                 }

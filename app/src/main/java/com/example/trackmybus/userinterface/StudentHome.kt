@@ -84,7 +84,7 @@ fun StudentHome(
                     fontWeight = FontWeight.Bold
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box {
+                    Box(modifier = Modifier.clickable { onAlertsClick() }) {
                         Icon(
                             imageVector = Icons.Outlined.Notifications,
                             contentDescription = null,
