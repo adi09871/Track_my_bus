@@ -74,34 +74,12 @@ fun DriverLiveTripScreen(
             )
         },
         bottomBar = {
-            NavigationBar(
-                containerColor = Color.White,
-                tonalElevation = 8.dp
-            ) {
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onBusClick,
-                    icon = { Icon(Icons.Default.DirectionsBus, contentDescription = null) },
-                    label = { Text("Bus") }
-                )
-                NavigationBarItem(
-                    selected = true,
-                    onClick = { },
-                    icon = { Icon(Icons.Default.NearMe, contentDescription = null) },
-                    label = { Text("Trip") },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF0061D5),
-                        selectedTextColor = Color(0xFF0061D5),
-                        indicatorColor = Color(0xFFE3F2FD)
-                    )
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onProfileClick,
-                    icon = { Icon(Icons.Default.Person, contentDescription = null) },
-                    label = { Text("Profile") }
-                )
-            }
+            DriverBottomBar(
+                selectedScreen = "trip",
+                onBusClick = onBusClick,
+                onTripClick = { },
+                onProfileClick = onProfileClick
+            )
         }
     ) { paddingValues ->
         Column(

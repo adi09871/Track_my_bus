@@ -27,34 +27,12 @@ fun DriverProfileScreen(
 ) {
     Scaffold(
         bottomBar = {
-            NavigationBar(
-                containerColor = Color.White,
-                tonalElevation = 8.dp
-            ) {
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onBusClick,
-                    icon = { Icon(Icons.Default.DirectionsBus, contentDescription = null) },
-                    label = { Text("Bus") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onTripClick,
-                    icon = { Icon(Icons.Default.NearMe, contentDescription = null) },
-                    label = { Text("Trip") }
-                )
-                NavigationBarItem(
-                    selected = true,
-                    onClick = { },
-                    icon = { Icon(Icons.Default.Person, contentDescription = null) },
-                    label = { Text("Profile") },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF0061D5),
-                        selectedTextColor = Color(0xFF0061D5),
-                        indicatorColor = Color(0xFFE3F2FD)
-                    )
-                )
-            }
+            DriverBottomBar(
+                selectedScreen = "profile",
+                onBusClick = onBusClick,
+                onTripClick = onTripClick,
+                onProfileClick = { }
+            )
         }
     ) { paddingValues ->
         Column(
