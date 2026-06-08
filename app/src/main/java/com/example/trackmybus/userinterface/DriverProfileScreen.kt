@@ -64,7 +64,7 @@ fun DriverProfileScreen(
                     Surface(
                         modifier = Modifier.size(70.dp),
                         shape = CircleShape,
-                        color = Color(0xFF0061D5)
+                        color = Color(0xFF6A39FF)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Text(
@@ -168,7 +168,7 @@ fun DriverDetailRow(icon: ImageVector, label: String, value: String) {
             color = Color(0xFFF0F7FF)
         ) {
             Box(contentAlignment = Alignment.Center) {
-                Icon(icon, null, modifier = Modifier.size(20.dp), tint = Color(0xFF0061D5))
+                Icon(icon, null, modifier = Modifier.size(20.dp), tint = Color(0xFF6A39FF))
             }
         }
         Spacer(modifier = Modifier.width(16.dp))
@@ -193,7 +193,7 @@ fun DriverSettingsRow(icon: ImageVector, title: String) {
             color = Color(0xFFF0F7FF)
         ) {
             Box(contentAlignment = Alignment.Center) {
-                Icon(icon, null, modifier = Modifier.size(20.dp), tint = Color(0xFF0061D5))
+                Icon(icon, null, modifier = Modifier.size(20.dp), tint = Color(0xFF6A39FF))
             }
         }
         Spacer(modifier = Modifier.width(16.dp))

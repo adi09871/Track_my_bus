@@ -67,9 +67,9 @@ fun BusTrackingScreen(
                     icon = { Icon(Icons.Default.LocationOn, contentDescription = null) },
                     label = { Text("Track") },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF0061D5),
-                        selectedTextColor = Color(0xFF0061D5),
-                        indicatorColor = Color(0xFFE3F2FD)
+                        selectedIconColor = Color(0xFF6A39FF),
+                        selectedTextColor = Color(0xFF6A39FF),
+                        indicatorColor = Color(0xFFF0EDFF)
                     )
                 )
                 NavigationBarItem(
@@ -90,7 +90,7 @@ fun BusTrackingScreen(
             FloatingActionButton(
                 onClick = { },
                 containerColor = Color.White,
-                contentColor = Color(0xFF0061D5),
+                contentColor = Color(0xFF6A39FF),
                 shape = CircleShape,
                 modifier = Modifier.padding(bottom = 16.dp)
             ) {
@@ -128,7 +128,7 @@ fun BusTrackingScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Surface(
                                 modifier = Modifier.size(48.dp),
-                                color = Color(0xFF0061D5),
+                                color = Color(0xFF6A39FF),
                                 shape = CircleShape
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
@@ -203,7 +203,7 @@ fun TrackingInfoItem(modifier: Modifier, icon: ImageVector, label: String, value
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(icon, null, modifier = Modifier.size(14.dp), tint = Color(0xFF0061D5))
+                Icon(icon, null, modifier = Modifier.size(14.dp), tint = Color(0xFF6A39FF))
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(label, color = Color.Gray, fontSize = 11.sp)
             }

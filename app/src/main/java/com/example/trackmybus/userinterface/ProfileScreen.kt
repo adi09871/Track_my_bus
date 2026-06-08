@@ -58,9 +58,9 @@ fun ProfileScreen(
                     icon = { Icon(Icons.Default.Person, contentDescription = null) },
                     label = { Text("Profile") },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF0061D5),
-                        selectedTextColor = Color(0xFF0061D5),
-                        indicatorColor = Color(0xFFE3F2FD)
+                        selectedIconColor = Color(0xFF6A39FF),
+                        selectedTextColor = Color(0xFF6A39FF),
+                        indicatorColor = Color(0xFFF0EDFF)
                     )
                 )
             }
@@ -86,7 +86,7 @@ fun ProfileScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(28.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD))
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFF0EDFF))
             ) {
                 Row(
                     modifier = Modifier.padding(20.dp),
@@ -95,7 +95,7 @@ fun ProfileScreen(
                     Surface(
                         modifier = Modifier.size(70.dp),
                         shape = CircleShape,
-                        color = Color(0xFF0061D5)
+                        color = Color(0xFF6A39FF)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Text(
@@ -213,7 +213,7 @@ fun DetailRow(icon: ImageVector, label: String, value: String) {
             color = Color(0xFFF0F7FF)
         ) {
             Box(contentAlignment = Alignment.Center) {
-                Icon(icon, null, modifier = Modifier.size(20.dp), tint = Color(0xFF0061D5))
+                Icon(icon, null, modifier = Modifier.size(20.dp), tint = Color(0xFF6A39FF))
             }
         }
         Spacer(modifier = Modifier.width(16.dp))
@@ -238,7 +238,7 @@ fun SettingsRow(icon: ImageVector, title: String) {
             color = Color(0xFFF0F7FF)
         ) {
             Box(contentAlignment = Alignment.Center) {
-                Icon(icon, null, modifier = Modifier.size(20.dp), tint = Color(0xFF0061D5))
+                Icon(icon, null, modifier = Modifier.size(20.dp), tint = Color(0xFF6A39FF))
             }
         }
         Spacer(modifier = Modifier.width(16.dp))

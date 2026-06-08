@@ -26,9 +26,9 @@ fun DriverBottomBar(
             icon = { Icon(Icons.Default.DirectionsBus, contentDescription = null) },
             label = { Text("Bus") },
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color(0xFF0061D5),
-                selectedTextColor = Color(0xFF0061D5),
-                indicatorColor = Color(0xFFE3F2FD),
+                selectedIconColor = Color(0xFF6A39FF),
+                selectedTextColor = Color(0xFF6A39FF),
+                indicatorColor = Color(0xFFF0EDFF),
                 unselectedIconColor = Color.Gray,
                 unselectedTextColor = Color.Gray
             )
@@ -39,9 +39,9 @@ fun DriverBottomBar(
             icon = { Icon(Icons.Default.NearMe, contentDescription = null) },
             label = { Text("Trip") },
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color(0xFF0061D5),
-                selectedTextColor = Color(0xFF0061D5),
-                indicatorColor = Color(0xFFE3F2FD),
+                selectedIconColor = Color(0xFF6A39FF),
+                selectedTextColor = Color(0xFF6A39FF),
+                indicatorColor = Color(0xFFF0EDFF),
                 unselectedIconColor = Color.Gray,
                 unselectedTextColor = Color.Gray
             )
@@ -52,9 +52,9 @@ fun DriverBottomBar(
             icon = { Icon(Icons.Default.Person, contentDescription = null) },
             label = { Text("Profile") },
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color(0xFF0061D5),
-                selectedTextColor = Color(0xFF0061D5),
-                indicatorColor = Color(0xFFE3F2FD),
+                selectedIconColor = Color(0xFF6A39FF),
+                selectedTextColor = Color(0xFF6A39FF),
+                indicatorColor = Color(0xFFF0EDFF),
                 unselectedIconColor = Color.Gray,
                 unselectedTextColor = Color.Gray
             )

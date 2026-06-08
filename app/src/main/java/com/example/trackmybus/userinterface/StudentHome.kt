@@ -38,9 +38,9 @@ fun StudentHome(
                     icon = { Icon(Icons.Default.Home, contentDescription = null) },
                     label = { Text("Home") },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF0061D5),
-                        selectedTextColor = Color(0xFF0061D5),
-                        indicatorColor = Color(0xFFE3F2FD)
+                        selectedIconColor = Color(0xFF6A39FF),
+                        selectedTextColor = Color(0xFF6A39FF),
+                        indicatorColor = Color(0xFFF0EDFF)
                     )
                 )
                 NavigationBarItem(
@@ -122,7 +122,7 @@ fun StudentHome(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(28.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF0061D5))
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF6A39FF))
             ) {
                 Column(modifier = Modifier.padding(24.dp)) {
                     Row(
@@ -183,9 +183,9 @@ fun StudentHome(
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                         shape = RoundedCornerShape(28.dp)
                     ) {
-                        Icon(Icons.Default.NearMe, null, tint = Color(0xFF0061D5))
+                        Icon(Icons.Default.NearMe, null, tint = Color(0xFF6A39FF))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Track My Bus", color = Color(0xFF0061D5), fontWeight = FontWeight.Bold)
+                        Text("Track My Bus", color = Color(0xFF6A39FF), fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -206,7 +206,7 @@ fun StudentHome(
             ) {
                 Text("Recent updates", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 TextButton(onClick = { }) {
-                    Text("See all", color = Color(0xFF0061D5))
+                    Text("See all", color = Color(0xFF6A39FF))
                 }
             }
 
@@ -219,7 +219,7 @@ fun StudentHome(
                 Column {
                     UpdateItem(
                         icon = Icons.Default.Notifications,
-                        iconBg = Color(0xFFE3F2FD),
+                        iconBg = Color(0xFFF0EDFF),
                         title = "Bus B-204 is approaching Library",
                         time = "2 min ago"
                     )
@@ -277,7 +277,7 @@ fun UpdateItem(icon: ImageVector, iconBg: Color, title: String, time: String) {
     ) {
         Surface(modifier = Modifier.size(40.dp), shape = CircleShape, color = iconBg) {
             Box(contentAlignment = Alignment.Center) {
-                Icon(icon, null, modifier = Modifier.size(20.dp), tint = Color(0xFF0061D5))
+                Icon(icon, null, modifier = Modifier.size(20.dp), tint = Color(0xFF6A39FF))
             }
         }
         Spacer(modifier = Modifier.width(12.dp))

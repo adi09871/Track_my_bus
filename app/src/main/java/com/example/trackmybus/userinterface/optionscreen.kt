@@ -27,7 +27,7 @@ fun OptionScreen(onStudentClick: () -> Unit, onDriverClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFE1F5FE))
+            .background(Color(0xFFF0EDFF))
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -35,7 +35,7 @@ fun OptionScreen(onStudentClick: () -> Unit, onDriverClick: () -> Unit) {
 
         Surface(
             modifier = Modifier.size(100.dp),
-            color = Color(0xFF0061D5),
+            color = Color(0xFF6A39FF),
             shape = RoundedCornerShape(28.dp),
             shadowElevation = 8.dp
         ) {
@@ -85,8 +85,8 @@ fun OptionScreen(onStudentClick: () -> Unit, onDriverClick: () -> Unit) {
             title = "Student",
             description = "Track your assigned bus",
             icon = Icons.Default.Person,
-            iconBgColor = Color(0xFFE3F2FD),
-            iconTint = Color(0xFF0061D5),
+            iconBgColor = Color(0xFFF0EDFF),
+            iconTint = Color(0xFF6A39FF),
             onClick = onStudentClick
         )
 
@@ -96,8 +96,8 @@ fun OptionScreen(onStudentClick: () -> Unit, onDriverClick: () -> Unit) {
             title = "Driver",
             description = "Manage your trip & route",
             icon = Icons.Default.DirectionsBus,
-            iconBgColor = Color(0xFFE3F2FD),
-            iconTint = Color(0xFF0061D5),
+            iconBgColor = Color(0xFFF0EDFF),
+            iconTint = Color(0xFF6A39FF),
             onClick = onDriverClick
         )
 

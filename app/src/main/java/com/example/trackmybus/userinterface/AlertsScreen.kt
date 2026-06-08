@@ -57,9 +57,9 @@ fun AlertsScreen(
                     icon = { Icon(Icons.Default.Notifications, contentDescription = null) },
                     label = { Text("Alerts") },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF0061D5),
-                        selectedTextColor = Color(0xFF0061D5),
-                        indicatorColor = Color(0xFFE3F2FD)
+                        selectedIconColor = Color(0xFF6A39FF),
+                        selectedTextColor = Color(0xFF6A39FF),
+                        indicatorColor = Color(0xFFF0EDFF)
                     )
                 )
                 NavigationBarItem(
@@ -92,14 +92,14 @@ fun AlertsScreen(
             ScrollableTabRow(
                 selectedTabIndex = selectedTab,
                 containerColor = Color.Transparent,
-                contentColor = Color(0xFF0061D5),
+                contentColor = Color(0xFF6A39FF),
                 edgePadding = 0.dp,
                 divider = {},
                 indicator = { tabPositions ->
                     if (selectedTab < tabPositions.size) {
                         SecondaryIndicator(
                             modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                            color = Color(0xFF0061D5)
+                            color = Color(0xFF6A39FF)
                         )
                     }
                 }
@@ -202,7 +202,7 @@ fun AlertItem(alert: AlertData) {
                 Surface(
                     modifier = Modifier.size(8.dp),
                     shape = CircleShape,
-                    color = Color(0xFF0061D5)
+                    color = Color(0xFF6A39FF)
                 ) {}
                 Spacer(modifier = Modifier.width(8.dp))
             }
@@ -231,8 +231,8 @@ val alertList = listOf(
         "Bus B-204 is approaching Library",
         "2 min ago",
         Icons.Default.DirectionsBus,
-        Color(0xFFE3F2FD),
-        Color(0xFF0061D5),
+        Color(0xFFF0EDFF),
+        Color(0xFF6A39FF),
         true,
         true
     ),
@@ -256,8 +256,8 @@ val alertList = listOf(
         "Bus B-205 is now at Main Gate",
         "Yesterday, 08:30 AM",
         Icons.Default.DirectionsBus,
-        Color(0xFFE3F2FD),
-        Color(0xFF0061D5),
+        Color(0xFFF0EDFF),
+        Color(0xFF6A39FF),
         false
     ),
     AlertData(

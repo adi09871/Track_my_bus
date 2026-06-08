@@ -74,7 +74,7 @@ fun DriverHome(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Surface(
                             modifier = Modifier.size(48.dp),
-                            color = Color(0xFF0061D5),
+                            color = Color(0xFF6A39FF),
                             shape = CircleShape
                         ) {
                             Box(contentAlignment = Alignment.Center) {
@@ -133,8 +133,8 @@ fun DriverHome(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(8.dp),
-                        color = Color(0xFF0061D5),
-                        trackColor = Color(0xFFE3F2FD),
+                        color = Color(0xFF6A39FF),
+                        trackColor = Color(0xFFF0EDFF),
                         strokeCap = StrokeCap.Round
                     )
 
@@ -163,7 +163,7 @@ fun DriverHome(
                             onClick = { if (onboardCount < maxCapacity) onboardCount++ },
                             modifier = Modifier
                                 .size(64.dp)
-                                .background(Color(0xFF0061D5), CircleShape)
+                                .background(Color(0xFF6A39FF), CircleShape)
                         ) {
                             Icon(Icons.Default.Add, null, tint = Color.White, modifier = Modifier.size(32.dp))
                         }
@@ -215,7 +215,7 @@ fun DriverHome(
                                 .weight(1f)
                                 .height(56.dp),
                             shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0061D5)),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6A39FF)),
                             enabled = !isTripStarted
                         ) {
                             Icon(Icons.Default.PlayArrow, null)
@@ -291,7 +291,7 @@ fun StatusItem(icon: ImageVector, label: String, status: String, statusColor: Co
                 shape = CircleShape
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Icon(icon, null, modifier = Modifier.size(20.dp), tint = Color(0xFF0061D5))
+                    Icon(icon, null, modifier = Modifier.size(20.dp), tint = Color(0xFF6A39FF))
                 }
             }
             Spacer(modifier = Modifier.width(16.dp))

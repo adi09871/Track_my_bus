@@ -93,7 +93,7 @@ fun DriverLiveTripScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(28.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF0061D5))
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF6A39FF))
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
                     Row(
@@ -138,7 +138,7 @@ fun DriverLiveTripScreen(
                     .fillMaxWidth()
                     .height(280.dp),
                 shape = RoundedCornerShape(28.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD))
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFF0EDFF))
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     // Placeholder for Map drawing
@@ -152,7 +152,7 @@ fun DriverLiveTripScreen(
                         }
                         drawPath(
                             path = path,
-                            color = Color(0xFF0061D5),
+                            color = Color(0xFF6A39FF),
                             style = Stroke(width = 8f)
                         )
                     }
@@ -168,7 +168,7 @@ fun DriverLiveTripScreen(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(Icons.Default.Route, null, modifier = Modifier.size(14.dp), tint = Color(0xFF0061D5))
+                            Icon(Icons.Default.Route, null, modifier = Modifier.size(14.dp), tint = Color(0xFF6A39FF))
                             Spacer(modifier = Modifier.width(4.dp))
                             Text("Route 12", fontSize = 12.sp, fontWeight = FontWeight.Medium)
                         }
@@ -210,7 +210,7 @@ fun DriverLiveTripScreen(
                     ) {
                         Surface(
                             modifier = Modifier.size(40.dp),
-                            color = Color(0xFF0061D5),
+                            color = Color(0xFF6A39FF),
                             shape = CircleShape
                         ) {
                             Box(contentAlignment = Alignment.Center) {
@@ -241,7 +241,7 @@ fun DriverLiveTripScreen(
                         .weight(1f)
                         .height(56.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0061D5))
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6A39FF))
                 ) {
                     Icon(Icons.Default.Add, null)
                     Spacer(modifier = Modifier.width(8.dp))

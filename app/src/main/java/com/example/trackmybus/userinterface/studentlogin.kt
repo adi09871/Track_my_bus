@@ -49,7 +49,7 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
 
         Surface(
             modifier = Modifier.size(80.dp),
-            color = Color(0xFF0061D5),
+            color = Color(0xFF6A39FF),
             shape = RoundedCornerShape(24.dp)
         ) {
             Box(contentAlignment = Alignment.Center) {
@@ -106,7 +106,7 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White,
                     unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF0061D5)
+                    focusedBorderColor = Color(0xFF6A39FF)
                 ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
@@ -146,7 +146,7 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White,
                     unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF0061D5)
+                    focusedBorderColor = Color(0xFF6A39FF)
                 ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
@@ -158,7 +158,7 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
             Text(
                 text = "Forgot password?",
-                color = Color(0xFF0061D5),
+                color = Color(0xFF6A39FF),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -172,7 +172,7 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
                 .fillMaxWidth()
                 .height(56.dp),
             shape = RoundedCornerShape(28.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0061D5))
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6A39FF))
         ) {
             Text(text = "Log in", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
@@ -181,7 +181,7 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
 
         Text(
             text = "Back to role selection",
-            color = Color(0xFF0061D5),
+            color = Color(0xFF6A39FF),
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center,
@@ -194,7 +194,7 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
             withStyle(style = SpanStyle(color = Color.Gray)) {
                 append("Need help? Contact ")
             }
-            withStyle(style = SpanStyle(color = Color(0xFF0061D5), fontWeight = FontWeight.Medium)) {
+            withStyle(style = SpanStyle(color = Color(0xFF6A39FF), fontWeight = FontWeight.Medium)) {
                 append("transport@college.edu")
             }
         }

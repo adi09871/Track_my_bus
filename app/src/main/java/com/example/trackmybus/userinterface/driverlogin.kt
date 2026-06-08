@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.trackmybus.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,12 +46,12 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
         // Driver Portal Logo
         Surface(
             modifier = Modifier.size(80.dp),
-            color = Color(0xFF0061D5),
+            color = Color(0xFF6A39FF),
             shape = RoundedCornerShape(24.dp)
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
-                    imageVector = Icons.Default.DirectionsBus,
+                    painter = painterResource(id = R.drawable.logo),
                     contentDescription = null,
                     tint = Color.White,
                     modifier = Modifier.size(40.dp)
@@ -109,7 +111,7 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White,
                     unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF0061D5)
+                    focusedBorderColor = Color(0xFF6A39FF)
                 ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
@@ -150,7 +152,7 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White,
                     unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF0061D5)
+                    focusedBorderColor = Color(0xFF6A39FF)
                 ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
@@ -162,7 +164,7 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
             Text(
                 text = "Forgot password?",
-                color = Color(0xFF0061D5),
+                color = Color(0xFF6A39FF),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.clickable { /* Handle Forgot Password */ }
@@ -178,7 +180,7 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
                 .fillMaxWidth()
                 .height(56.dp),
             shape = RoundedCornerShape(28.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0061D5))
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6A39FF))
         ) {
             Text(text = "Log in", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
@@ -188,7 +190,7 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
         // Back to role selection
         Text(
             text = "Back to role selection",
-            color = Color(0xFF0061D5),
+            color = Color(0xFF6A39FF),
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center,
