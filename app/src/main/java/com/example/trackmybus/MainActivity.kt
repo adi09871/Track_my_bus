@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
                         DriverLogin(
                             onBackClick = { navController.popBackStack() },
                             onLoginSuccess = {
-                                navController.navigate("addbus") {
+                                navController.navigate("driverhome") {
                                     popUpTo("optionscreen") { inclusive = true }
                                 }
                             }
@@ -131,8 +131,20 @@ class MainActivity : ComponentActivity() {
 
                     composable("driverhome") {
                         DriverHome(
-                            onProfileClick = { navController.navigate("driverprofile") },
-                            onTripClick = { navController.navigate("drivertrip") }
+                            onProfileClick = {
+                                navController.navigate("driverprofile") {
+                                    popUpTo("driverhome") { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
+                            onTripClick = {
+                                navController.navigate("drivertrip") {
+                                    popUpTo("driverhome") { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
                         )
                     }
 
@@ -140,10 +152,18 @@ class MainActivity : ComponentActivity() {
                         DriverLiveTripScreen(
                             onBusClick = {
                                 navController.navigate("driverhome") {
-                                    popUpTo("driverhome") { inclusive = true }
+                                    popUpTo("driverhome") { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
                             },
-                            onProfileClick = { navController.navigate("driverprofile") },
+                            onProfileClick = {
+                                navController.navigate("driverprofile") {
+                                    popUpTo("driverhome") { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
                             onBackClick = { navController.popBackStack() }
                         )
                     }
@@ -152,12 +172,16 @@ class MainActivity : ComponentActivity() {
                         DriverProfileScreen(
                             onBusClick = {
                                 navController.navigate("driverhome") {
-                                    popUpTo("driverhome") { inclusive = true }
+                                    popUpTo("driverhome") { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
                             },
                             onTripClick = {
                                 navController.navigate("drivertrip") {
-                                    popUpTo("driverhome") { inclusive = false }
+                                    popUpTo("driverhome") { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
                             },
                             onLogoutClick = {
