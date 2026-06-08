@@ -29,7 +29,7 @@ import com.example.trackmybus.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
+fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupClick: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -111,7 +111,9 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White,
                     unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF6A39FF)
+                    focusedBorderColor = Color(0xFF6A39FF),
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
                 ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
@@ -152,7 +154,9 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White,
                     unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF6A39FF)
+                    focusedBorderColor = Color(0xFF6A39FF),
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
                 ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
@@ -185,6 +189,25 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
             Text(text = "Log in", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Signup Button
+        OutlinedButton(
+            onClick = onSignupClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(28.dp),
+            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF6A39FF))
+        ) {
+            Text(
+                text = "Don't have an account? Sign up",
+                color = Color(0xFF6A39FF),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
         Spacer(modifier = Modifier.weight(1f))
 
         // Back to role selection
@@ -204,5 +227,5 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun DriverLoginPreview() {
-    DriverLogin(onBackClick = {}, onLoginSuccess = {})
+    DriverLogin(onBackClick = {}, onLoginSuccess = {}, onSignupClick = {})
 }

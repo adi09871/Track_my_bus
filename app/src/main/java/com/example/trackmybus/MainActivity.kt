@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.trackmybus.ui.theme.TrackMyBusTheme
 import com.example.trackmybus.userinterface.AddBusScreen
 import com.example.trackmybus.userinterface.DriverLogin
+import com.example.trackmybus.userinterface.DriverSignup
 import com.example.trackmybus.userinterface.OptionScreen
 import com.example.trackmybus.userinterface.AlertsScreen
 import com.example.trackmybus.userinterface.BusTrackingScreen
@@ -19,6 +20,7 @@ import com.example.trackmybus.userinterface.DriverProfileScreen
 import com.example.trackmybus.userinterface.ProfileScreen
 import com.example.trackmybus.userinterface.StudentHome
 import com.example.trackmybus.userinterface.StudentLogin
+import com.example.trackmybus.userinterface.StudentSignup
 import com.example.trackmybus.userinterface.splashscreen
 
 class MainActivity : ComponentActivity() {
@@ -55,6 +57,18 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("studenthome") {
                                     popUpTo("optionscreen") { inclusive = true }
                                 }
+                            },
+                            onSignupClick = { navController.navigate("studentsignup") }
+                        )
+                    }
+
+                    composable("studentsignup") {
+                        StudentSignup(
+                            onBackClick = { navController.popBackStack() },
+                            onSignupSuccess = {
+                                navController.navigate("studenthome") {
+                                    popUpTo("optionscreen") { inclusive = true }
+                                }
                             }
                         )
                     }
@@ -63,6 +77,18 @@ class MainActivity : ComponentActivity() {
                         DriverLogin(
                             onBackClick = { navController.popBackStack() },
                             onLoginSuccess = {
+                                navController.navigate("driverhome") {
+                                    popUpTo("optionscreen") { inclusive = true }
+                                }
+                            },
+                            onSignupClick = { navController.navigate("driversignup") }
+                        )
+                    }
+
+                    composable("driversignup") {
+                        DriverSignup(
+                            onBackClick = { navController.popBackStack() },
+                            onSignupSuccess = {
                                 navController.navigate("driverhome") {
                                     popUpTo("optionscreen") { inclusive = true }
                                 }

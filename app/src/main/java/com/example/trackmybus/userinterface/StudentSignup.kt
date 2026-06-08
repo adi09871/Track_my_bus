@@ -1,6 +1,5 @@
 package com.example.trackmybus.userinterface
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,12 +8,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +32,8 @@ import com.example.trackmybus.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupClick: () -> Unit) {
+fun StudentSignup(onBackClick: () -> Unit, onSignupSuccess: () -> Unit) {
+    var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -63,22 +62,18 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCl
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-
-
         Spacer(modifier = Modifier.height(40.dp))
 
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Welcome back",
+                text = "Create account",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Sign in to track your college bus",
+                text = "Join Smart Bus Tracker today",
                 fontSize = 16.sp,
                 color = Color.Gray
             )
@@ -86,6 +81,39 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCl
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        // Name Field
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "Full name",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.Gray
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("e.g. Aarav Sharma") },
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Person, contentDescription = null, tint = Color.Gray)
+                },
+                shape = RoundedCornerShape(20.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                    unfocusedBorderColor = Color(0xFFE0E0E0),
+                    focusedBorderColor = Color(0xFF6A39FF),
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
+                ),
+                singleLine = true
+            )
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // Email Field
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "College email",
@@ -118,9 +146,10 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCl
 
         Spacer(modifier = Modifier.height(20.dp))
 
+        // Password Field
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Password",
+                text = "Create password",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color.Gray
@@ -158,73 +187,28 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCl
             )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-            Text(
-                text = "Forgot password?",
-                color = Color(0xFF6A39FF),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
-            )
-        }
-
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { onLoginSuccess() },
+            onClick = { onSignupSuccess() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
             shape = RoundedCornerShape(28.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6A39FF))
         ) {
-            Text(text = "Log in", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedButton(
-            onClick = { onSignupClick() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = RoundedCornerShape(28.dp),
-            border = BorderStroke(1.dp, Color(0xFF6A39FF))
-        ) {
-            Text(
-                text = "Don't have an account? Sign up",
-                color = Color(0xFF6A39FF),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
-            )
+            Text(text = "Sign up", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
         Text(
-            text = "Back to role selection",
+            text = "Already have an account? Log in",
             color = Color(0xFF6A39FF),
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center,
             modifier = Modifier.clickable { onBackClick() }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        val footerText = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = Color.Gray)) {
-                append("Need help? Contact ")
-            }
-            withStyle(style = SpanStyle(color = Color(0xFF6A39FF), fontWeight = FontWeight.Medium)) {
-                append("transport@college.edu")
-            }
-        }
-        Text(
-            text = footerText,
-            fontSize = 14.sp,
-            textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -233,6 +217,6 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCl
 
 @Preview(showBackground = true)
 @Composable
-fun StudentLoginPreview() {
-    StudentLogin(onBackClick = {}, onLoginSuccess = {}, onSignupClick = {})
+fun StudentSignupPreview() {
+    StudentSignup(onBackClick = {}, onSignupSuccess = {})
 }
