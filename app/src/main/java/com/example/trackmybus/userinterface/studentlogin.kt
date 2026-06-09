@@ -1,5 +1,6 @@
 package com.example.trackmybus.userinterface
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,6 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -31,6 +34,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.trackmybus.R
+import com.example.trackmybus.model.StudentLoginRequest
+import com.example.trackmybus.network.RetrofitInstance
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,7 +44,8 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCl
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-
+val context = LocalContext.current
+    val scope = rememberCoroutineScope ()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -172,7 +179,53 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCl
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { onLoginSuccess() },
+            onClick = {
+                scope.launch {
+
+                    try {
+
+                        val response =
+                            RetrofitInstance.api.studentLogin(
+                                StudentLoginRequest(
+                                    email = email,
+                                    password = password
+                                )
+                            )
+
+                        if (response.isSuccessful) {
+
+                            val message = response.body()
+
+                            Toast.makeText(
+                                context,
+                                message,
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            if (message == "Login Successful!") {
+                                onLoginSuccess()
+                            }
+
+                        } else {
+
+                            Toast.makeText(
+                                context,
+                                "Login Failed",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                    } catch (e: Exception) {
+
+                        Toast.makeText(
+                            context,
+                            e.message,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
