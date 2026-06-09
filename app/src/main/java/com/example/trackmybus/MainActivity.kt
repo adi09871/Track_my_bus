@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
                         DriverLogin(
                             onBackClick = { navController.popBackStack() },
                             onLoginSuccess = {
-                                navController.navigate("driverhome") {
+                                navController.navigate("addbus") {
                                     popUpTo("optionscreen") { inclusive = true }
                                 }
                             },
@@ -89,7 +89,7 @@ class MainActivity : ComponentActivity() {
                         DriverSignup(
                             onBackClick = { navController.popBackStack() },
                             onSignupSuccess = {
-                                navController.navigate("driverhome") {
+                                navController.navigate("addbus") {
                                     popUpTo("optionscreen") { inclusive = true }
                                 }
                             }
@@ -99,7 +99,8 @@ class MainActivity : ComponentActivity() {
                     composable("addbus") {
                         AddBusScreen(
                             onBackClick = { navController.popBackStack() },
-                            onCreateBusClick = {
+                            onCreateBusClick = { busNum, cap, route ->
+                                // Save bus details logic can be added here
                                 navController.navigate("driverhome") {
                                     popUpTo("addbus") { inclusive = true }
                                 }

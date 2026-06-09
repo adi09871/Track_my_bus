@@ -1,5 +1,8 @@
 package com.example.trackmybus.userinterface
 
+import android.gesture.GestureStroke
+import android.util.Log.e
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -27,6 +30,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.trackmybus.R
+import com.example.trackmybus.model.DriverLoginRequest
+import com.example.trackmybus.network.RetrofitInstance
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +40,7 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-val context = LocalContext.current
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     Column(
         modifier = Modifier
@@ -106,7 +112,11 @@ val context = LocalContext.current
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("driver@college.edu", color = Color.LightGray) },
                 leadingIcon = {
-                    Icon(imageVector = Icons.Outlined.Email, contentDescription = null, tint = Color.Gray)
+                    Icon(
+                        imageVector = Icons.Outlined.Email,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
                 },
                 shape = RoundedCornerShape(24.dp),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -139,7 +149,11 @@ val context = LocalContext.current
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("••••••••", color = Color.LightGray) },
                 leadingIcon = {
-                    Icon(imageVector = Icons.Outlined.Lock, contentDescription = null, tint = Color.Gray)
+                    Icon(
+                        imageVector = Icons.Outlined.Lock,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
                 },
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -181,7 +195,49 @@ val context = LocalContext.current
 
         // Log in Button
         Button(
-            onClick = onLoginSuccess,
+            onClick = {
+                scope.launch {
+                    try {
+                        val response = RetrofitInstance.api.driverLogin(
+                            DriverLoginRequest(
+                                email = email,
+                                password = password
+                            )
+                        )
+
+                        if (response.isSuccessful) {
+                            val message = response.body()
+                            Toast.makeText(
+                                context,
+                                message,
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            if (message == "Login Successful!") {
+                                onLoginSuccess()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Login failed: $message",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Login failed: ${response.code()}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(
+                            context,
+                            e.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),

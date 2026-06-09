@@ -55,7 +55,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun AddBusScreen(
     onBackClick: () -> Unit,
-    onCreateBusClick: () -> Unit,
+    onCreateBusClick: (String, String, String) -> Unit,
     onBusSelect: (String) -> Unit
 ) {
     var busNumber by remember { mutableStateOf("") }
@@ -202,7 +202,11 @@ fun AddBusScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     Button(
-                        onClick = onCreateBusClick,
+                        onClick = {
+                            if (busNumber.isNotBlank() && seatCapacity.isNotBlank() && routeName.isNotBlank()) {
+                                onCreateBusClick(busNumber, seatCapacity, routeName)
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
@@ -304,5 +308,5 @@ fun BusListItem(name: String, details: String, onClick: (String) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun AddBusScreenPreview() {
-    AddBusScreen(onBackClick = {}, onCreateBusClick = {}, onBusSelect = {})
+    AddBusScreen(onBackClick = {}, onCreateBusClick = { _, _, _ -> }, onBusSelect = {})
 }
