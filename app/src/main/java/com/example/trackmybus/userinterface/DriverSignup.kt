@@ -1,16 +1,12 @@
 package com.example.trackmybus.userinterface
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
@@ -21,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -31,6 +28,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.trackmybus.R
+import com.example.trackmybus.model.DriverRegisterRequest
+import com.example.trackmybus.network.RetrofitInstance
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +39,8 @@ fun DriverSignup(onBackClick: () -> Unit, onSignupSuccess: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-
+val context = LocalContext.current
+    val scope = rememberCoroutineScope ()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -192,7 +193,54 @@ fun DriverSignup(onBackClick: () -> Unit, onSignupSuccess: () -> Unit) {
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { onSignupSuccess() },
+            onClick = {
+                scope.launch {
+
+                    try{
+                        val response = RetrofitInstance.api.driverRegister(
+
+                            DriverRegisterRequest(
+                                email = email,
+                                password = password,
+                         name = name
+                            )
+                        )
+
+                        if (response.isSuccessful)
+
+                        {
+                            val message = response.body()
+
+                            Toast.makeText(
+                                context,
+                                message,
+                                Toast.LENGTH_SHORT
+
+                            ).show()
+                            if (
+                                message == "Driver Registered Successfully "
+                            ){
+                                onSignupSuccess()
+                            }
+
+                        } else  {
+
+                            Toast.makeText(
+                                context,
+                                "Registration failed: ${response.code()}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                    }catch (e: Exception){
+                        Toast.makeText(
+                            context,
+                            "An error occurred: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+            }}
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),

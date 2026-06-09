@@ -25,7 +25,7 @@ interface ApiService {
         @Body request: DriverLoginRequest
     ): Response<String>
 
-    @POST("driver/register")
+    @POST("drivers/register")
     suspend fun driverRegister(
         @Body request: DriverRegisterRequest
     ): Response<String>
