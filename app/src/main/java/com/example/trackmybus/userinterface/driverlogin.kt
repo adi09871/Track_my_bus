@@ -1,7 +1,5 @@
 package com.example.trackmybus.userinterface
-
-import android.gesture.GestureStroke
-import android.util.Log.e
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.example.trackmybus.R
 import com.example.trackmybus.model.DriverLoginRequest
 import com.example.trackmybus.network.RetrofitInstance
+import com.example.trackmybus.session.SessionManager
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -197,7 +196,9 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
         Button(
             onClick = {
                 scope.launch {
+
                     try {
+
                         val response = RetrofitInstance.api.driverLogin(
                             DriverLoginRequest(
                                 email = email,
@@ -206,7 +207,12 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
                         )
 
                         if (response.isSuccessful) {
-                            val message = response.body()
+
+                            val loginResponse = response.body()
+
+                            val message = loginResponse?.message
+                            val driverId = loginResponse?.driverId
+
                             Toast.makeText(
                                 context,
                                 message,
@@ -214,25 +220,39 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
                             ).show()
 
                             if (message == "Login Successful!") {
+
+                                SessionManager.driverId = driverId ?: -1
+
+                                Log.d(
+                                    "DRIVER_ID",
+                                    SessionManager.driverId.toString()
+                                )
+
                                 onLoginSuccess()
+
                             } else {
+
                                 Toast.makeText(
                                     context,
                                     "Login failed: $message",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
+
                         } else {
+
                             Toast.makeText(
                                 context,
                                 "Login failed: ${response.code()}",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
+
                     } catch (e: Exception) {
+
                         Toast.makeText(
                             context,
-                            e.message,
+                            e.message ?: "Unknown Error",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -242,9 +262,11 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
                 .fillMaxWidth()
                 .height(56.dp),
             shape = RoundedCornerShape(28.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6A39FF))
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF6A39FF)
+            )
         ) {
-            Text(text = "Log in", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Text("Log in")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
