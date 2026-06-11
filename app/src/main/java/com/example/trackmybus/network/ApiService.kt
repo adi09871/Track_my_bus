@@ -2,9 +2,11 @@ package com.example.trackmybus.network
 
 import com.example.trackmybus.model.Bus
 import com.example.trackmybus.model.BusCreateRequest
+import com.example.trackmybus.model.BusCreateResponse
 import com.example.trackmybus.model.DriverLoginRequest
 import com.example.trackmybus.model.DriverLoginResponse
 import com.example.trackmybus.model.DriverRegisterRequest
+import com.example.trackmybus.model.SaveStopsRequest
 import com.example.trackmybus.model.StudentLoginRequest
 import com.example.trackmybus.model.StudentRegisterRequest
 import retrofit2.Response
@@ -39,10 +41,14 @@ interface ApiService {
     @POST("buses/create")
     suspend fun createBus(
         @Body request: BusCreateRequest
-    ): Response<String>
+    ): Response<BusCreateResponse>
 
     @GET("buses/driver/{driverId}")
     suspend fun getBusesByDriverId(
         @Path("driverId") driverId: Long
     ): Response<List<Bus>>
+
+
+
+
 }

@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.trackmybus.ui.theme.TrackMyBusTheme
 import com.example.trackmybus.userinterface.AddBusScreen
+import com.example.trackmybus.userinterface.AddStopsScreen
 import com.example.trackmybus.userinterface.DriverLogin
 import com.example.trackmybus.userinterface.DriverSignup
 import com.example.trackmybus.userinterface.OptionScreen
@@ -100,12 +101,29 @@ class MainActivity : ComponentActivity() {
                         AddBusScreen(
                             onBackClick = { navController.popBackStack() },
                             onCreateBusClick = { busNum, cap, route ->
-                                // Save bus details logic can be added here
-                                navController.navigate("driverhome") {
+                                navController.navigate("addstops/$busNum/$route/$cap") {
                                     popUpTo("addbus") { inclusive = true }
                                 }
                             },
-                            onBusSelect = { busName ->
+                            onBusSelect = { busNum, route, cap ->
+                                navController.navigate("addstops/$busNum/$route/$cap") {
+                                    popUpTo("addbus") { inclusive = true }
+                                }
+                            }
+                        )
+                    }
+
+                    composable("addstops/{busNumber}/{routeName}/{seatCapacity}") { backStackEntry ->
+                        val busNumber = backStackEntry.arguments?.getString("busNumber") ?: ""
+                        val routeName = backStackEntry.arguments?.getString("routeName") ?: ""
+                        val seatCapacity = backStackEntry.arguments?.getString("seatCapacity")?.toIntOrNull() ?: 0
+
+                        AddStopsScreen(
+                            busNumber = busNumber,
+                            routeName = routeName,
+                            seatCapacity = seatCapacity,
+                            onBackClick = { navController.popBackStack() },
+                            onSaveStopsClick = { stops ->
                                 navController.navigate("driverhome") {
                                     popUpTo("addbus") { inclusive = true }
                                 }
