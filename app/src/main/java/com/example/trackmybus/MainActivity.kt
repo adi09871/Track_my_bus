@@ -7,6 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.trackmybus.model.SaveStopsRequest
+import com.example.trackmybus.network.RetrofitInstance
+import com.example.trackmybus.session.SessionManager
 import com.example.trackmybus.ui.theme.TrackMyBusTheme
 import com.example.trackmybus.userinterface.AddBusScreen
 import com.example.trackmybus.userinterface.AddStopsScreen
@@ -23,6 +26,9 @@ import com.example.trackmybus.userinterface.StudentHome
 import com.example.trackmybus.userinterface.StudentLogin
 import com.example.trackmybus.userinterface.StudentSignup
 import com.example.trackmybus.userinterface.splashscreen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,7 +111,7 @@ class MainActivity : ComponentActivity() {
                                     popUpTo("addbus") { inclusive = true }
                                 }
                             },
-                            onBusSelect = { busNum, route, cap ->
+                            onBusSelect = { busNum, route, cap, id ->
                                 navController.navigate("addstops/$busNum/$route/$cap") {
                                     popUpTo("addbus") { inclusive = true }
                                 }
@@ -124,8 +130,25 @@ class MainActivity : ComponentActivity() {
                             seatCapacity = seatCapacity,
                             onBackClick = { navController.popBackStack() },
                             onSaveStopsClick = { stops ->
-                                navController.navigate("driverhome") {
-                                    popUpTo("addbus") { inclusive = true }
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    try {
+                                        val response = RetrofitInstance.api.saveStops(
+                                            SaveStopsRequest(
+                                                busId = SessionManager.busId,
+                                                stops = stops
+                                            )
+                                        )
+
+                                        if (response.isSuccessful) {
+                                            launch(Dispatchers.Main) {
+                                                navController.navigate("driverhome") {
+                                                    popUpTo("addbus") { inclusive = true }
+                                                }
+                                            }
+                                        }
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
                                 }
                             }
                         )

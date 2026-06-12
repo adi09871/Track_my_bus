@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 fun AddBusScreen(
     onBackClick: () -> Unit,
     onCreateBusClick: (String, String, String) -> Unit,
-    onBusSelect: (String, String, Int) -> Unit
+    onBusSelect: (String, String, Int, Long) -> Unit
 ) {
     var busNumber by remember { mutableStateOf("") }
     var seatCapacity by remember { mutableStateOf("") }
@@ -271,7 +271,10 @@ fun AddBusScreen(
                             BusListItem(
                                 name = bus.busNumber,
                                 details = bus.routeName,
-                                onClick = { onBusSelect(bus.busNumber, bus.routeName, bus.seatCapacity) }
+                                onClick = {
+                                    SessionManager.busId = bus.id
+                                    onBusSelect(bus.busNumber, bus.routeName, bus.seatCapacity, bus.id)
+                                }
                             )
                             if (index < busList.lastIndex) {
                                 HorizontalDivider(

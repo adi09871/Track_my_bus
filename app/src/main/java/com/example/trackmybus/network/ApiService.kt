@@ -6,7 +6,9 @@ import com.example.trackmybus.model.BusCreateResponse
 import com.example.trackmybus.model.DriverLoginRequest
 import com.example.trackmybus.model.DriverLoginResponse
 import com.example.trackmybus.model.DriverRegisterRequest
+import com.example.trackmybus.model.LocationUpdateRequest
 import com.example.trackmybus.model.SaveStopsRequest
+import com.example.trackmybus.model.Stop
 import com.example.trackmybus.model.StudentLoginRequest
 import com.example.trackmybus.model.StudentRegisterRequest
 import retrofit2.Response
@@ -48,7 +50,41 @@ interface ApiService {
         @Path("driverId") driverId: Long
     ): Response<List<Bus>>
 
+    @POST("stops/save")
+    suspend fun saveStops(
+        @Body request: SaveStopsRequest
+    ): Response<String>
 
+    @POST("location/update")
+    suspend fun updateLocation(
 
+        @Body request: LocationUpdateRequest
+
+    ): Response<String>
+
+    @GET("stops/bus/{busId}")
+    suspend fun getStopsByBusId(
+        @Path("busId") busId: Long
+    ): Response<List<Stop>>
+
+    @POST("buses/increase/{busId}")
+    suspend fun increaseOccupancy(
+        @Path("busId") busId: Long
+    ): Response<Bus>
+
+    @POST("buses/decrease/{busId}")
+    suspend fun decreaseOccupancy(
+        @Path("busId") busId: Long
+    ): Response<Bus>
+
+    @POST("buses/start-trip/{busId}")
+    suspend fun startTrip(
+        @Path("busId") busId: Long
+    ): Response<Bus>
+
+    @POST("buses/stop-trip/{busId}")
+    suspend fun stopTrip(
+        @Path("busId") busId: Long
+    ): Response<Bus>
 
 }

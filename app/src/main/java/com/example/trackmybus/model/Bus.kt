@@ -5,5 +5,8 @@ data class Bus(
     val busNumber: String,
     val routeName: String,
     val seatCapacity: Int,
-    val driverId: Long
+    val driverId: Long,
+    val currentOccupancy: Int,
+    val totalStops: Int = 0,
+    val isTripActive: Boolean
 )

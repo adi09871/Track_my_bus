@@ -1,5 +1,6 @@
 package com.example.trackmybus.userinterface
 
+import android.R.attr.enabled
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -20,15 +21,44 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.trackmybus.model.Bus
+import com.example.trackmybus.network.RetrofitInstance
+import com.example.trackmybus.session.SessionManager
+import kotlinx.coroutines.launch
 
 @Composable
 fun DriverHome(
     onProfileClick: () -> Unit,
     onTripClick: () -> Unit
 ) {
-    var onboardCount by remember { mutableIntStateOf(18) }
-    val maxCapacity = 40
-    var isTripStarted by remember { mutableStateOf(false) }
+    // State management
+    var bus by remember { mutableStateOf<Bus?>(null) }
+    var stopsCount by remember { mutableIntStateOf(0) }
+    val scope = rememberCoroutineScope()
+
+    // Load Bus Data
+    LaunchedEffect(Unit) {
+        try {
+            val response = RetrofitInstance.api.getBusesByDriverId(SessionManager.driverId)
+            if (response.isSuccessful) {
+                val buses = response.body() ?: emptyList()
+                bus = buses.find { it.id == SessionManager.busId }
+                
+                // Debug Logs
+                println("SESSION BUS ID = ${SessionManager.busId}")
+                println("LOADED BUS ID = ${bus?.id}")
+                println("LOADED BUS NUMBER = ${bus?.busNumber}")
+
+                // Fetch Stops Count
+                val stopsResponse = RetrofitInstance.api.getStopsByBusId(SessionManager.busId)
+                if (stopsResponse.isSuccessful) {
+                    stopsCount = stopsResponse.body()?.size ?: 0
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
     Scaffold(
         bottomBar = {
@@ -48,9 +78,8 @@ fun DriverHome(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
-            // Header
             Text(
-                text = "B-204",
+                text = bus?.busNumber ?: "Loading...",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -83,8 +112,16 @@ fun DriverHome(
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
-                            Text(text = "Bus B-204", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                            Text(text = "Campus → Sector 14", color = Color.Gray, fontSize = 14.sp)
+                            Text(
+                                text = "Bus ${bus?.busNumber ?: "---"}",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp
+                            )
+                            Text(
+                                text = bus?.routeName ?: "No route assigned",
+                                color = Color.Gray,
+                                fontSize = 14.sp
+                            )
                         }
                     }
 
@@ -92,24 +129,34 @@ fun DriverHome(
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        BusDetailItem(Icons.Default.Route, "Route", "12")
-                        BusDetailItem(Icons.Default.Groups, "Seats", "40")
-                        BusDetailItem(Icons.Default.Schedule, "Shift", "AM")
+                        BusDetailItem(
+                            Icons.Default.LocationOn,
+                            "Stops",
+                            stopsCount.toString()
+                        )
+                        BusDetailItem(
+                            Icons.Default.Groups,
+                            "Seats",
+                            "${bus?.seatCapacity ?: 0}"
+                        )
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Current Occupancy Card
+            // Occupancy Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(28.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
+                val currentOccupancy = bus?.currentOccupancy ?: 0
+                val maxCapacity = bus?.seatCapacity ?: 1 // Avoid division by zero
+
                 Column(modifier = Modifier.padding(20.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -121,15 +168,20 @@ fun DriverHome(
                             Text(text = "Update as students board", color = Color.Gray, fontSize = 13.sp)
                         }
                         Row(verticalAlignment = Alignment.Bottom) {
-                            Text(text = "$onboardCount", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                            Text(text = "/$maxCapacity", fontSize = 16.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 4.dp))
+                            Text(text = "$currentOccupancy", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                            Text(
+                                text = "/$maxCapacity",
+                                fontSize = 16.sp,
+                                color = Color.Gray,
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            )
                         }
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     LinearProgressIndicator(
-                        progress = { onboardCount.toFloat() / maxCapacity },
+                        progress = { currentOccupancy.toFloat() / maxCapacity.toFloat() },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(8.dp),
@@ -146,7 +198,22 @@ fun DriverHome(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(
-                            onClick = { if (onboardCount > 0) onboardCount-- },
+                            onClick = {
+                                bus?.let { currentBus ->
+                                    if (currentBus.currentOccupancy > 0) {
+                                        scope.launch {
+                                            try {
+                                                val response = RetrofitInstance.api.decreaseOccupancy(currentBus.id)
+                                                if (response.isSuccessful) {
+                                                    bus = response.body()
+                                                }
+                                            } catch (e: Exception) {
+                                                e.printStackTrace()
+                                            }
+                                        }
+                                    }
+                                }
+                            },
                             modifier = Modifier
                                 .size(64.dp)
                                 .background(Color(0xFFF0F7FF), CircleShape)
@@ -155,12 +222,27 @@ fun DriverHome(
                         }
 
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "$onboardCount", fontSize = 36.sp, fontWeight = FontWeight.Bold)
+                            Text(text = "$currentOccupancy", fontSize = 36.sp, fontWeight = FontWeight.Bold)
                             Text(text = "ONBOARD", fontSize = 12.sp, color = Color.Gray, fontWeight = FontWeight.Medium)
                         }
 
                         IconButton(
-                            onClick = { if (onboardCount < maxCapacity) onboardCount++ },
+                            onClick = {
+                                bus?.let { currentBus ->
+                                    if (currentBus.currentOccupancy < currentBus.seatCapacity) {
+                                        scope.launch {
+                                            try {
+                                                val response = RetrofitInstance.api.increaseOccupancy(currentBus.id)
+                                                if (response.isSuccessful) {
+                                                    bus = response.body()
+                                                }
+                                            } catch (e: Exception) {
+                                                e.printStackTrace()
+                                            }
+                                        }
+                                    }
+                                }
+                            },
                             modifier = Modifier
                                 .size(64.dp)
                                 .background(Color(0xFF6A39FF), CircleShape)
@@ -173,7 +255,6 @@ fun DriverHome(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Trip Controls Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(28.dp),
@@ -198,7 +279,7 @@ fun DriverHome(
                                 Surface(modifier = Modifier.size(6.dp), color = Color.Gray, shape = CircleShape) {}
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
-                                    text = if (isTripStarted) "Trip started" else "Trip not started",
+                                    text = if (bus?.isTripActive == true) "Trip started" else "Trip not started",
                                     fontSize = 12.sp,
                                     color = Color.Gray
                                 )
@@ -208,33 +289,107 @@ fun DriverHome(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+
                         Button(
-                            onClick = { isTripStarted = true },
+                            onClick = {
+
+                                scope.launch {
+
+
+                                    bus?.let { currentBus ->
+
+                                        try {
+
+                                            val response =
+                                                RetrofitInstance.api.startTrip(
+                                                    currentBus.id
+                                                )
+
+                                            if (response.isSuccessful) {
+
+                                                bus = response.body()
+                                            }
+
+                                        } catch (e: Exception) {
+
+                                            e.printStackTrace()
+                                        }
+                                    }
+                                }
+
+                            },
                             modifier = Modifier
                                 .weight(1f)
                                 .height(56.dp),
                             shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6A39FF)),
-                            enabled = !isTripStarted
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF6A39FF)
+                            ),
+                            enabled = bus?.isTripActive != true
                         ) {
                             Icon(Icons.Default.PlayArrow, null)
+
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Start trip", fontWeight = FontWeight.Bold)
+
+                            Text(
+                                text = "Start trip",
+                                fontWeight = FontWeight.Bold
+                            )
                         }
 
                         Button(
-                            onClick = { isTripStarted = false },
+                            onClick = {
+                                scope.launch {
+
+                                    bus?.let { currentBus ->
+                                        println("STARTING BUS ID = ${currentBus.id}")
+                                        println("STARTING BUS NUMBER = ${currentBus.busNumber}")
+
+                                        try {
+
+                                            val response =
+                                                RetrofitInstance.api.stopTrip(
+                                                    currentBus.id
+                                                )
+
+                                            if (response.isSuccessful) {
+
+                                                bus = response.body()
+                                            }
+
+                                        } catch (e: Exception) {
+
+                                            e.printStackTrace()
+                                        }
+                                    }
+                                }
+                            },
                             modifier = Modifier
                                 .weight(1f)
                                 .height(56.dp),
                             shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFB2B2)),
-                            enabled = isTripStarted
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFFFB2B2)
+                            ),
+                            enabled = bus?.isTripActive == true
                         ) {
-                            Icon(Icons.Default.Stop, null, tint = Color.White)
+                            Icon(
+                                Icons.Default.Stop,
+                                null,
+                                tint = Color.White
+                            )
+
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Stop trip", color = Color.White, fontWeight = FontWeight.Bold)
+
+                            Text(
+                                text = "Stop trip",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                 }
@@ -242,11 +397,15 @@ fun DriverHome(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Status Items
-            StatusItem(Icons.Default.GpsFixed, "GPS status", "Active", Color(0xFF4CAF50))
-            Spacer(modifier = Modifier.height(12.dp))
-            StatusItem(Icons.Default.Timeline, "Trip status", "Idle", Color.Gray)
-        }
+            StatusItem(
+                Icons.Default.Timeline,
+                "Trip status",
+                if (bus?.isTripActive == true) "Running" else "Idle",
+                if (bus?.isTripActive == true)
+                    Color(0xFF4CAF50)
+                else
+                    Color.Gray
+            )}
     }
 }
 
