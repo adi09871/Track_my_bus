@@ -1,17 +1,47 @@
 package com.example.trackmybus.userinterface
 
-import android.R.attr.enabled
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DirectionsBus
+import androidx.compose.material.icons.filled.Groups
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.Timeline
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,9 +51,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.trackmybus.model.Bus
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.trackmybus.network.RetrofitInstance
-import com.example.trackmybus.session.SessionManager
+import com.example.trackmybus.viewmodel.DriverHomeViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -32,33 +62,23 @@ fun DriverHome(
     onTripClick: () -> Unit
 ) {
     // State management
-    var bus by remember { mutableStateOf<Bus?>(null) }
-    var stopsCount by remember { mutableIntStateOf(0) }
-    val scope = rememberCoroutineScope()
 
+    val viewModel: DriverHomeViewModel = viewModel()
+
+    var bus = viewModel.bus
+
+    var stopsCount by remember {
+        mutableIntStateOf(0)
+    }
+
+    val scope = rememberCoroutineScope()
     // Load Bus Data
     LaunchedEffect(Unit) {
-        try {
-            val response = RetrofitInstance.api.getBusesByDriverId(SessionManager.driverId)
-            if (response.isSuccessful) {
-                val buses = response.body() ?: emptyList()
-                bus = buses.find { it.id == SessionManager.busId }
-                
-                // Debug Logs
-                println("SESSION BUS ID = ${SessionManager.busId}")
-                println("LOADED BUS ID = ${bus?.id}")
-                println("LOADED BUS NUMBER = ${bus?.busNumber}")
 
-                // Fetch Stops Count
-                val stopsResponse = RetrofitInstance.api.getStopsByBusId(SessionManager.busId)
-                if (stopsResponse.isSuccessful) {
-                    stopsCount = stopsResponse.body()?.size ?: 0
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+
+        viewModel.loadBus()
     }
+
 
     Scaffold(
         bottomBar = {
@@ -164,11 +184,23 @@ fun DriverHome(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text(text = "Current occupancy", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                            Text(text = "Update as students board", color = Color.Gray, fontSize = 13.sp)
+                            Text(
+                                text = "Current occupancy",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp
+                            )
+                            Text(
+                                text = "Update as students board",
+                                color = Color.Gray,
+                                fontSize = 13.sp
+                            )
                         }
                         Row(verticalAlignment = Alignment.Bottom) {
-                            Text(text = "$currentOccupancy", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                            Text(
+                                text = "$currentOccupancy",
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold
+                            )
                             Text(
                                 text = "/$maxCapacity",
                                 fontSize = 16.sp,
@@ -199,55 +231,48 @@ fun DriverHome(
                     ) {
                         IconButton(
                             onClick = {
-                                bus?.let { currentBus ->
-                                    if (currentBus.currentOccupancy > 0) {
-                                        scope.launch {
-                                            try {
-                                                val response = RetrofitInstance.api.decreaseOccupancy(currentBus.id)
-                                                if (response.isSuccessful) {
-                                                    bus = response.body()
-                                                }
-                                            } catch (e: Exception) {
-                                                e.printStackTrace()
-                                            }
-                                        }
-                                    }
-                                }
+                                viewModel.decreaseOccupancy()
                             },
                             modifier = Modifier
                                 .size(64.dp)
                                 .background(Color(0xFFF0F7FF), CircleShape)
                         ) {
-                            Icon(Icons.Default.Remove, null, tint = Color.Black, modifier = Modifier.size(32.dp))
+                            Icon(
+                                Icons.Default.Remove,
+                                null,
+                                tint = Color.Black,
+                                modifier = Modifier.size(32.dp)
+                            )
                         }
 
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "$currentOccupancy", fontSize = 36.sp, fontWeight = FontWeight.Bold)
-                            Text(text = "ONBOARD", fontSize = 12.sp, color = Color.Gray, fontWeight = FontWeight.Medium)
+                            Text(
+                                text = "$currentOccupancy",
+                                fontSize = 36.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "ONBOARD",
+                                fontSize = 12.sp,
+                                color = Color.Gray,
+                                fontWeight = FontWeight.Medium
+                            )
                         }
 
                         IconButton(
                             onClick = {
-                                bus?.let { currentBus ->
-                                    if (currentBus.currentOccupancy < currentBus.seatCapacity) {
-                                        scope.launch {
-                                            try {
-                                                val response = RetrofitInstance.api.increaseOccupancy(currentBus.id)
-                                                if (response.isSuccessful) {
-                                                    bus = response.body()
-                                                }
-                                            } catch (e: Exception) {
-                                                e.printStackTrace()
-                                            }
-                                        }
-                                    }
-                                }
+                                viewModel.increaseOccupancy()
                             },
                             modifier = Modifier
                                 .size(64.dp)
                                 .background(Color(0xFF6A39FF), CircleShape)
                         ) {
-                            Icon(Icons.Default.Add, null, tint = Color.White, modifier = Modifier.size(32.dp))
+                            Icon(
+                                Icons.Default.Add,
+                                null,
+                                tint = Color.White,
+                                modifier = Modifier.size(32.dp)
+                            )
                         }
                     }
                 }
@@ -276,7 +301,11 @@ fun DriverHome(
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Surface(modifier = Modifier.size(6.dp), color = Color.Gray, shape = CircleShape) {}
+                                Surface(
+                                    modifier = Modifier.size(6.dp),
+                                    color = Color.Gray,
+                                    shape = CircleShape
+                                ) {}
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
                                     text = if (bus?.isTripActive == true) "Trip started" else "Trip not started",
@@ -296,30 +325,7 @@ fun DriverHome(
 
                         Button(
                             onClick = {
-
-                                scope.launch {
-
-
-                                    bus?.let { currentBus ->
-
-                                        try {
-
-                                            val response =
-                                                RetrofitInstance.api.startTrip(
-                                                    currentBus.id
-                                                )
-
-                                            if (response.isSuccessful) {
-
-                                                bus = response.body()
-                                            }
-
-                                        } catch (e: Exception) {
-
-                                            e.printStackTrace()
-                                        }
-                                    }
-                                }
+                                viewModel.startTrip()
 
                             },
                             modifier = Modifier
@@ -342,31 +348,10 @@ fun DriverHome(
                         }
 
                         Button(
+
                             onClick = {
-                                scope.launch {
+                                viewModel.stopTrip()
 
-                                    bus?.let { currentBus ->
-                                        println("STARTING BUS ID = ${currentBus.id}")
-                                        println("STARTING BUS NUMBER = ${currentBus.busNumber}")
-
-                                        try {
-
-                                            val response =
-                                                RetrofitInstance.api.stopTrip(
-                                                    currentBus.id
-                                                )
-
-                                            if (response.isSuccessful) {
-
-                                                bus = response.body()
-                                            }
-
-                                        } catch (e: Exception) {
-
-                                            e.printStackTrace()
-                                        }
-                                    }
-                                }
                             },
                             modifier = Modifier
                                 .weight(1f)
@@ -405,7 +390,8 @@ fun DriverHome(
                     Color(0xFF4CAF50)
                 else
                     Color.Gray
-            )}
+            )
+        }
     }
 }
 
