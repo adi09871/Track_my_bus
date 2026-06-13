@@ -67,12 +67,9 @@ fun DriverHome(
 
     var bus = viewModel.bus
 
-    var stopsCount by remember {
-        mutableIntStateOf(0)
-    }
+    val stopsCount = viewModel.stopsCount
 
-    val scope = rememberCoroutineScope()
-    // Load Bus Data
+
     LaunchedEffect(Unit) {
 
 

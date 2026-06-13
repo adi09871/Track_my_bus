@@ -18,12 +18,14 @@ class BusRepository {
         RetrofitInstance.api.startTrip(
             busId
         )
+
     suspend fun stopTrip(
         busId: Long
     ) =
         RetrofitInstance.api.stopTrip(
             busId
         )
+
     suspend fun increaseOccupancy(
         busId: Long
     ) =
@@ -37,10 +39,18 @@ class BusRepository {
         RetrofitInstance.api.decreaseOccupancy(
             busId
         )
+
     suspend fun createBus(
         request: BusCreateRequest
     ) =
         RetrofitInstance.api.createBus(
             request
+        )
+
+    suspend fun getStopsByBusId(
+        busId: Long
+    ) =
+        RetrofitInstance.api.getStopsByBusId(
+            busId
         )
 }

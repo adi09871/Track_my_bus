@@ -16,6 +16,8 @@ class DriverHomeViewModel : ViewModel(){
 
     var bus by mutableStateOf<Bus?>(null)
         private set
+    var stopsCount by mutableStateOf(0)
+        private set
     fun loadBus() {
 
         viewModelScope.launch {
@@ -35,6 +37,20 @@ class DriverHomeViewModel : ViewModel(){
                     bus = buses.find {
                         it.id == SessionManager.busId
                     }
+                }
+                val stopsResponse =
+                    repository.getStopsByBusId(
+                        SessionManager.busId
+                    )
+
+                if (stopsResponse.isSuccessful) {
+
+                    stopsCount =
+                        stopsResponse.body()?.size ?: 0
+                    println("SESSION BUS ID = ${SessionManager.busId}")
+                    println("BUS LOADED = ${bus?.id}")
+                    println("STOPS COUNT = $stopsCount")
+
                 }
 
             } catch (e: Exception) {

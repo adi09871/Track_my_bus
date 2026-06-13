@@ -18,6 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.trackmybus.viewmodel.AddStopsViewModel
 
 data class Stop(
     val name: String,
@@ -33,17 +35,12 @@ fun AddStopsScreen(
     onBackClick: () -> Unit,
     onSaveStopsClick: (List<String>) -> Unit
 ) {
-    val availableStopNames = listOf(
-        "Campus Gate", "Library", "Sector 14", "Metro Station",
-        "Old Town", "Riverside", "City Center", "Market Square",
-        "Bus Depot", "Dwarka"
-    )
+    val viewModel: AddStopsViewModel = viewModel()
 
-    var stops by remember {
-        mutableStateOf(availableStopNames.map { Stop(it) })
+    val stops = viewModel.stops
+    val selectedStops = stops.filter {
+        it.isSelected
     }
-
-    val selectedStops = stops.filter { it.isSelected }
 
     Scaffold(
         topBar = {
@@ -180,15 +177,16 @@ fun AddStopsScreen(
                 }
             }
 
-            // List of Stops
+            // List of Stopsa
             items(stops) { stop ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            stops = stops.map {
-                                if (it.name == stop.name) it.copy(isSelected = !it.isSelected) else it
-                            }
+                            viewModel.toggleStopSelection(
+                                stop.name
+                            )
+
                         },
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
