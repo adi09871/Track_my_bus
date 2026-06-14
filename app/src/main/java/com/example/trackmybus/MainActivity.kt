@@ -132,6 +132,7 @@ class MainActivity : ComponentActivity() {
                             onSaveStopsClick = { stops ->
                                 CoroutineScope(Dispatchers.IO).launch {
                                     try {
+
                                         val response = RetrofitInstance.api.saveStops(
                                             SaveStopsRequest(
                                                 busId = SessionManager.busId,
