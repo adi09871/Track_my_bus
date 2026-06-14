@@ -1,6 +1,7 @@
 package com.example.trackmybus.repository
 
 import com.example.trackmybus.model.BusCreateRequest
+import com.example.trackmybus.model.LocationUpdateRequest
 import com.example.trackmybus.network.RetrofitInstance
 
 class BusRepository {
@@ -52,5 +53,12 @@ class BusRepository {
     ) =
         RetrofitInstance.api.getStopsByBusId(
             busId
+        )
+
+    suspend fun updateLocation(
+        request: LocationUpdateRequest
+    ) =
+        RetrofitInstance.api.updateLocation(
+            request
         )
 }
