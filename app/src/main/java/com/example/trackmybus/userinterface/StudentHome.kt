@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.trackmybus.session.SessionManager
 
 @Composable
 fun StudentHome(
@@ -111,7 +112,7 @@ fun StudentHome(
 
             Text(text = "Good morning,", color = Color.Gray, fontSize = 16.sp)
             Text(
-                text = "Aarav 👋",
+                text = "${SessionManager.studentName} 👋",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(vertical = 4.dp)

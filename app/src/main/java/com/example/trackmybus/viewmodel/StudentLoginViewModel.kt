@@ -12,7 +12,13 @@ class StudentLoginViewModel : ViewModel() {
     fun login(
         email: String,
         password: String,
-        onResult: (Boolean, String) -> Unit
+        onResult: (
+            Boolean,
+            String,
+            Long,
+            String,
+            Long
+        ) -> Unit
     ) {
 
         viewModelScope.launch {
@@ -29,16 +35,38 @@ class StudentLoginViewModel : ViewModel() {
 
                 if (response.isSuccessful) {
 
-                    onResult(
-                        true,
-                        response.body() ?: "Login Successful!"
-                    )
+                    val student =
+                        response.body()
+
+                    if (student != null) {
+
+                        onResult(
+                            true,
+                            "Login Successful!",
+                            student.id,
+                            student.name,
+                            student.busId ?: -1
+                        )
+
+                    } else {
+
+                        onResult(
+                            false,
+                            "Login Failed",
+                            -1,
+                            "",
+                            -1
+                        )
+                    }
 
                 } else {
 
                     onResult(
                         false,
-                        "Login Failed"
+                        "Login Failed",
+                        -1,
+                        "",
+                        -1
                     )
                 }
 
@@ -46,7 +74,10 @@ class StudentLoginViewModel : ViewModel() {
 
                 onResult(
                     false,
-                    e.message ?: "Something went wrong"
+                    e.message ?: "Something went wrong",
+                    -1,
+                    "",
+                    -1
                 )
             }
         }

@@ -10,6 +10,7 @@ import com.example.trackmybus.model.LocationUpdateRequest
 import com.example.trackmybus.model.SaveStopsRequest
 import com.example.trackmybus.model.Stop
 import com.example.trackmybus.model.StudentLoginRequest
+import com.example.trackmybus.model.StudentLoginResponse
 import com.example.trackmybus.model.StudentRegisterRequest
 import retrofit2.Response
 import retrofit2.http.Body
@@ -28,7 +29,7 @@ interface ApiService {
     @POST("students/login")
     suspend fun studentLogin(
         @Body request: StudentLoginRequest
-    ): Response<String>
+    ): Response<StudentLoginResponse>
 
     @POST("drivers/login")
     suspend fun driverLogin(

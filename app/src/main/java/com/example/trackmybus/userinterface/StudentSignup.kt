@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
@@ -21,6 +22,8 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,6 +62,13 @@ fun StudentSignup(onBackClick: () -> Unit, onSignupSuccess: () -> Unit) {
     var passwordVisible by remember { mutableStateOf(false) }
 val context = LocalContext.current
     val viewModel: StudentSignupViewModel = viewModel()
+    var collegeId by remember { mutableStateOf("") }
+    var selectedBus by remember {
+        mutableStateOf("Select Bus")
+    }
+    var expanded by remember {
+        mutableStateOf(false)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -163,7 +173,111 @@ val context = LocalContext.current
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
             )
         }
+        Column(modifier = Modifier.fillMaxWidth()) {
 
+            Text(
+                text = "College ID",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.Gray
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = collegeId,
+                onValueChange = { collegeId = it },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("e.g. 22BCS105") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
+                },
+                shape = RoundedCornerShape(20.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                    unfocusedBorderColor = Color(0xFFE0E0E0),
+                    focusedBorderColor = Color(0xFF6A39FF),
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
+                ),
+                singleLine = true
+            )
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+
+            Text(
+                text = "Select Bus",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.Gray
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = selectedBus,
+                onValueChange = {},
+                modifier = Modifier.fillMaxWidth(),
+                readOnly = true,
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            expanded = true
+                        }
+                    ) {
+                        Icon(
+                            Icons.Default.ArrowDropDown,
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = {
+                    expanded = false
+                }
+            ) {
+
+                DropdownMenuItem(
+                    text = {
+                        Text("B-204")
+                    },
+                    onClick = {
+                        selectedBus = "B-204"
+                        expanded = false
+                    }
+                )
+
+                DropdownMenuItem(
+                    text = {
+                        Text("B-101")
+                    },
+                    onClick = {
+                        selectedBus = "B-101"
+                        expanded = false
+                    }
+                )
+
+                DropdownMenuItem(
+                    text = {
+                        Text("B-301")
+                    },
+                    onClick = {
+                        selectedBus = "B-301"
+                        expanded = false
+                    }
+                )
+            }
+        }
         Spacer(modifier = Modifier.height(20.dp))
 
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -210,11 +324,19 @@ val context = LocalContext.current
 
         Button(
             onClick = {
+                val busId = when (selectedBus) {
+                    "B-204" -> 1L
+                    "B-101" -> 2L
+                    "B-301" -> 3L
+                    else -> -1L
+                }
 
                 viewModel.signup(
                     name = name,
                     email = email,
-                    password = password
+                    password = password,
+                    collegeId = collegeId,
+                    busId = busId
                 ) { success, message ->
 
                     Toast.makeText(

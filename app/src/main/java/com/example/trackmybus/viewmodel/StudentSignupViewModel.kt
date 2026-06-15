@@ -13,6 +13,8 @@ class StudentSignupViewModel : ViewModel() {
         name: String,
         email: String,
         password: String,
+        collegeId: String,
+        busId: Long,
         onResult: (Boolean, String) -> Unit
     ) {
 
@@ -25,7 +27,9 @@ class StudentSignupViewModel : ViewModel() {
                         StudentRegisterRequest(
                             name = name,
                             email = email,
-                            password = password
+                            password = password,
+                            collegeId = collegeId,
+                            busId = busId
                         )
                     )
 

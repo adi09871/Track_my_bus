@@ -224,10 +224,7 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    if (
-                        success &&
-                        message == "Login Successful!"
-                    ) {
+                    if (success) {
 
                         SessionManager.driverId = driverId
 

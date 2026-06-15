@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.trackmybus.R
+import com.example.trackmybus.session.SessionManager
 import com.example.trackmybus.viewmodel.StudentLoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -196,10 +197,15 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCl
 
         Button(
             onClick = {
+
                 viewModel.login(
                     email = email,
                     password = password
-                ) { success, message ->
+                ) { success,
+                    message,
+                    studentId,
+                    studentName,
+                    busId ->
 
                     Toast.makeText(
                         context,
@@ -207,14 +213,20 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCl
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    if (
-                        success &&
-                        message == "Login Successful!"
-                    ) {
+                    if (success) {
+
+                        SessionManager.studentId =
+                            studentId
+
+                        SessionManager.studentName =
+                            studentName
+
+                        SessionManager.busId =
+                            busId
+
                         onLoginSuccess()
                     }
                 }
-
             },
             modifier = Modifier
                 .fillMaxWidth()
