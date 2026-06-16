@@ -10,29 +10,18 @@ import kotlinx.coroutines.launch
 
 class BusViewModel : ViewModel() {
 
-    private val _buses =
-        MutableStateFlow<List<Bus>>(emptyList())
-
+    private val _buses = MutableStateFlow<List<Bus>>(emptyList())
     val buses: StateFlow<List<Bus>> = _buses
 
     fun loadBuses() {
-
         viewModelScope.launch {
-
             try {
-
-                val response =
-                    RetrofitInstance.api.getAllBuses()
-
+                val response = RetrofitInstance.api.getAllBuses()
                 if (response.isSuccessful) {
-
-                    _buses.value =
-                        response.body() ?: emptyList()
+                    _buses.value = response.body() ?: emptyList()
                 }
-
             } catch (e: Exception) {
-
-                e.printStackTrace()
+                // Error loading buses
             }
         }
     }

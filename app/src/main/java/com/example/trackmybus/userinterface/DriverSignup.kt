@@ -217,23 +217,17 @@ val context = LocalContext.current
                     email = email,
                     password = password
                 ) { success, message ->
-
-
-
                     Toast.makeText(
                         context,
                         message,
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    if (
-                        success
-                    ) {
+                    if (success) {
                         onSignupSuccess()
                     }
-
                 }
-                },
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),

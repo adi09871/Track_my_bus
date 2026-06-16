@@ -1,5 +1,5 @@
 package com.example.trackmybus.userinterface
-import android.util.Log
+
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -68,7 +68,6 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
     ) {
         Spacer(modifier = Modifier.height(60.dp))
 
-        // Driver Portal Logo
         Surface(
             modifier = Modifier.size(80.dp),
             color = Color(0xFF6A39FF),
@@ -96,7 +95,6 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        // Title and Subtitle
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "Driver sign in",
@@ -114,7 +112,6 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Email Field
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "Email",
@@ -151,7 +148,6 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Password Field
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "Password",
@@ -210,7 +206,6 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Log in Button
         Button(
             onClick = {
                 viewModel.login(
@@ -225,23 +220,13 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
                     ).show()
 
                     if (success && driverId != -1L) {
-
                         SessionManager.driverId = driverId
-
-                        Log.d(
-                            "DRIVER_ID",
-                            driverId.toString()
-                        )
-
                         onLoginSuccess()
                     } else if (success && driverId == -1L) {
-                        // Backend returned 200 but failed login (mocked or error in body)
                         Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
                     }
                 }
-            }
-
-             ,
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -255,7 +240,6 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Signup Button
         OutlinedButton(
             onClick = onSignupClick,
             modifier = Modifier
@@ -274,7 +258,6 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Back to role selection
         Text(
             text = "Back to role selection",
             color = Color(0xFF6A39FF),

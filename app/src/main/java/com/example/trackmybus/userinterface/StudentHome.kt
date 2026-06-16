@@ -35,9 +35,6 @@ fun StudentHome(
 
     val bus by viewModel.bus
     LaunchedEffect(Unit) {
-        println("HOME NAME = ${SessionManager.studentName}")
-        println("HOME BUS ID = ${SessionManager.busId}")
-
         viewModel.loadBus()
     }
     Scaffold(

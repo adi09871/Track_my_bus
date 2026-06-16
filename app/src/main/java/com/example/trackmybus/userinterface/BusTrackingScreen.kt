@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.trackmybus.viewmodel.BusTrackingViewModel
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,8 +39,12 @@ fun BusTrackingScreen(
     val viewModel: BusTrackingViewModel = viewModel()
 
     val location by viewModel.location
+
     LaunchedEffect(Unit) {
-        viewModel.loadBusLocation()
+        while (true) {
+            viewModel.loadBusLocation()
+            delay(5000.milliseconds)
+        }
     }
     Scaffold(
         topBar = {
@@ -100,13 +106,6 @@ fun BusTrackingScreen(
                     label = { Text("Profile") }
                 )
             }
-            Text(
-                text = "Lat = ${location?.latitude}"
-            )
-
-            Text(
-                text = "Lng = ${location?.longitude}"
-            )
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -127,7 +126,9 @@ fun BusTrackingScreen(
                 .background(Color(0xFFF0F4F8))
         ) {
             OpenStreetMapView(
-                context = context
+                context = context,
+                latitude = location?.latitude ?: 0.0,
+                longitude = location?.longitude ?: 0.0
             )
 
             // Bottom Info Card

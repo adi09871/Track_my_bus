@@ -239,7 +239,6 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCl
         ) {
             Text(text = "Log in", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
-        println("STUDENT BUS ID = ${SessionManager.busId}")
 
         Spacer(modifier = Modifier.height(16.dp))
 

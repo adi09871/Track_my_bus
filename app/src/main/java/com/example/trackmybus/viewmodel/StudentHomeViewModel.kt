@@ -14,38 +14,26 @@ class StudentHomeViewModel : ViewModel() {
         private set
     var totalStops = mutableStateOf(0)
         private set
+
     fun loadBus() {
-        println("BUS ID = ${SessionManager.busId}")
-
         viewModelScope.launch {
-
             try {
-
-                val response =
-                    RetrofitInstance.api.getBusById(
-                        SessionManager.busId
-                    )
-
+                val response = RetrofitInstance.api.getBusById(SessionManager.busId)
                 if (response.isSuccessful) {
                     bus.value = response.body()
                 }
-
             } catch (e: Exception) {
-                e.printStackTrace()
+                // Handle error
             }
-            val stopsResponse =
-                RetrofitInstance.api.getStopsByBusId(
-                    SessionManager.busId
-                )
 
-            if (stopsResponse.isSuccessful) {
-
-                totalStops.value =
-                    stopsResponse.body()?.size ?: 0
-
-                println("STOPS COUNT = ${totalStops.value}")
+            try {
+                val stopsResponse = RetrofitInstance.api.getStopsByBusId(SessionManager.busId)
+                if (stopsResponse.isSuccessful) {
+                    totalStops.value = stopsResponse.body()?.size ?: 0
+                }
+            } catch (e: Exception) {
+                // Handle error
             }
         }
     }
-
 }

@@ -55,7 +55,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.trackmybus.service.LocationForegroundService
-import com.example.trackmybus.session.SessionManager
 import com.example.trackmybus.viewmodel.DriverHomeViewModel
 
 @Composable
@@ -63,29 +62,25 @@ fun DriverHome(
     onProfileClick: () -> Unit,
     onTripClick: () -> Unit
 ) {
-    // State management
-
     val viewModel: DriverHomeViewModel = viewModel()
-
     val bus = viewModel.bus
-
     val stopsCount = viewModel.stopsCount
     val context = LocalContext.current
+
     val locationPermissionLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission()
         ) { isGranted ->
-
-            println("LOCATION PERMISSION = $isGranted")
+            if (isGranted) {
+                viewModel.startTrip()
+                val intent = Intent(context, LocationForegroundService::class.java)
+                ContextCompat.startForegroundService(context, intent)
+            }
         }
 
     LaunchedEffect(Unit) {
-        println("DEBUG: DriverHome Composable Recomposed/Launched")
-        println("DEBUG: Current studentName = ${SessionManager.studentName}") // Just in case
-        println("DEBUG: Current busId in Session = ${SessionManager.busId}")
         viewModel.loadBus()
     }
-
 
     Scaffold(
         bottomBar = {
@@ -119,7 +114,6 @@ fun DriverHome(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Bus Details Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(28.dp),
@@ -174,7 +168,6 @@ fun DriverHome(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Occupancy Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(28.dp),
@@ -182,7 +175,7 @@ fun DriverHome(
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 val currentOccupancy = bus?.currentOccupancy ?: 0
-                val maxCapacity = bus?.seatCapacity ?: 1 // Avoid division by zero
+                val maxCapacity = bus?.seatCapacity ?: 1
 
                 Column(modifier = Modifier.padding(20.dp)) {
                     Row(
@@ -329,39 +322,18 @@ fun DriverHome(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        println("DRIVER BUS ID = ${SessionManager.busId}")
                         Button(
                             onClick = {
-                                println("START BUTTON CLICKED")
-
-                                if (
-                                    ContextCompat.checkSelfPermission(
+                                if (ContextCompat.checkSelfPermission(
                                         context,
                                         Manifest.permission.ACCESS_FINE_LOCATION
                                     ) == PackageManager.PERMISSION_GRANTED
                                 ) {
-
-                                    println("PERMISSION GRANTED")
-
                                     viewModel.startTrip()
-
-                                    val intent = Intent(
-                                        context,
-                                        LocationForegroundService::class.java
-                                    )
-
-                                    ContextCompat.startForegroundService(
-                                        context,
-                                        intent
-                                    )
-
+                                    val intent = Intent(context, LocationForegroundService::class.java)
+                                    ContextCompat.startForegroundService(context, intent)
                                 } else {
-
-                                    println("PERMISSION REQUESTED")
-
-                                    locationPermissionLauncher.launch(
-                                        Manifest.permission.ACCESS_FINE_LOCATION
-                                    )
+                                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                                 }
                             },
                             modifier = Modifier
@@ -372,13 +344,9 @@ fun DriverHome(
                                 containerColor = Color(0xFF6A39FF)
                             ),
                             enabled = bus?.isTripActive != true
-
-                        )
-                        {
+                        ) {
                             Icon(Icons.Default.PlayArrow, null)
-
                             Spacer(modifier = Modifier.width(8.dp))
-
                             Text(
                                 text = "Start trip",
                                 fontWeight = FontWeight.Bold
@@ -386,10 +354,8 @@ fun DriverHome(
                         }
 
                         Button(
-
                             onClick = {
                                 viewModel.stopTrip()
-
                             },
                             modifier = Modifier
                                 .weight(1f)
@@ -405,9 +371,7 @@ fun DriverHome(
                                 null,
                                 tint = Color.White
                             )
-
                             Spacer(modifier = Modifier.width(8.dp))
-
                             Text(
                                 text = "Stop trip",
                                 color = Color.White,

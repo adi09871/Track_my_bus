@@ -14,29 +14,14 @@ class BusTrackingViewModel : ViewModel() {
         private set
 
     fun loadBusLocation() {
-
         viewModelScope.launch {
-
             try {
-                println("STUDENT BUS ID = ${SessionManager.busId}")
-                val response =
-                    RetrofitInstance.api.getCurrentLocation(
-                        SessionManager.busId
-                    )
-
-                println("LOCATION RESPONSE = ${response.body()}")
+                val response = RetrofitInstance.api.getCurrentLocation(SessionManager.busId)
                 if (response.isSuccessful) {
-
                     location.value = response.body()
-
-                    println(
-                        "BUS LOCATION = ${response.body()}"
-                    )
                 }
-
-            } catch (e: Exception) {
-
-                e.printStackTrace()
+            } catch (_: Exception) {
+                // Handle error
             }
         }
     }

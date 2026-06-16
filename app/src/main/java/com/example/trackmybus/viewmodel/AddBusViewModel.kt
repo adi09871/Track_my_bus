@@ -1,6 +1,5 @@
 package com.example.trackmybus.viewmodel
 
-
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,67 +15,48 @@ class AddBusViewModel : ViewModel() {
 
     private val repository = BusRepository()
 
-    var busList by mutableStateOf<List<Bus>>(
-        emptyList()
-    )
+    var busList by mutableStateOf<List<Bus>>(emptyList())
         private set
 
     fun loadBuses() {
-
         viewModelScope.launch {
-
             try {
-
-                val response =
-                    repository.getAllBuses()
-
+                val response = repository.getAllBuses()
                 if (response.isSuccessful) {
-
-                    busList =
-                        response.body() ?: emptyList()
+                    busList = response.body() ?: emptyList()
                 }
-
             } catch (e: Exception) {
-
-                e.printStackTrace()
+                // Error loading buses
             }
         }
     }
+
     fun createBus(
         busNumber: String,
         seatCapacity: String,
         routeName: String,
         onSuccess: (Long, String) -> Unit
     ) {
-
         viewModelScope.launch {
-
             try {
-
-                val response =
-                    repository.createBus(
-                        BusCreateRequest(
-                            busNumber = busNumber,
-                            seatCapacity = seatCapacity.toIntOrNull() ?: 0,
-                            routeName = routeName,
-                            driverId = SessionManager.driverId
-                        )
+                val response = repository.createBus(
+                    BusCreateRequest(
+                        busNumber = busNumber,
+                        seatCapacity = seatCapacity.toIntOrNull() ?: 0,
+                        routeName = routeName,
+                        driverId = SessionManager.driverId
                     )
+                )
 
                 if (response.isSuccessful) {
-
                     val busResponse = response.body()
-
                     onSuccess(
                         busResponse?.busId ?: -1L,
-                        busResponse?.message
-                            ?: "Bus Created Successfully"
+                        busResponse?.message ?: "Bus Created Successfully"
                     )
                 }
-
             } catch (e: Exception) {
-
-                e.printStackTrace()
+                // Error creating bus
             }
         }
     }
