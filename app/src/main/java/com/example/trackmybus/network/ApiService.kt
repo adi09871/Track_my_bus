@@ -88,5 +88,11 @@ interface ApiService {
         @Path("busId") busId: Long
     ): Response<Bus>
 
+    @GET("buses/{busId}")
+    suspend fun getBusById(
+        @Path("busId") busId: Long
+    ): Response<Bus>
 
+    @GET("buses")
+    suspend fun getAllBuses(): Response<List<Bus>>
 }

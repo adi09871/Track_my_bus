@@ -32,6 +32,8 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.trackmybus.R
+import com.example.trackmybus.viewmodel.BusViewModel
 import com.example.trackmybus.viewmodel.StudentSignupViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,7 +63,7 @@ fun StudentSignup(onBackClick: () -> Unit, onSignupSuccess: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-val context = LocalContext.current
+    val context = LocalContext.current
     val viewModel: StudentSignupViewModel = viewModel()
     var collegeId by remember { mutableStateOf("") }
     var selectedBus by remember {
@@ -68,6 +71,15 @@ val context = LocalContext.current
     }
     var expanded by remember {
         mutableStateOf(false)
+    }
+    val busViewModel: BusViewModel = viewModel()
+    var selectedBusId by remember {
+        mutableStateOf<Long?>(null)
+    }
+
+    val buses = busViewModel.buses.collectAsState()
+    LaunchedEffect(Unit) {
+        busViewModel.loadBuses()
     }
     Column(
         modifier = Modifier
@@ -127,7 +139,11 @@ val context = LocalContext.current
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("e.g. Aarav Sharma") },
                 leadingIcon = {
-                    Icon(imageVector = Icons.Default.Person, contentDescription = null, tint = Color.Gray)
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
                 },
                 shape = RoundedCornerShape(20.dp),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -158,7 +174,11 @@ val context = LocalContext.current
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("you@college.edu") },
                 leadingIcon = {
-                    Icon(imageVector = Icons.Default.Email, contentDescription = null, tint = Color.Gray)
+                    Icon(
+                        imageVector = Icons.Default.Email,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
                 },
                 shape = RoundedCornerShape(20.dp),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -247,35 +267,19 @@ val context = LocalContext.current
                 }
             ) {
 
-                DropdownMenuItem(
-                    text = {
-                        Text("B-204")
-                    },
-                    onClick = {
-                        selectedBus = "B-204"
-                        expanded = false
-                    }
-                )
+                buses.value.forEach { bus ->
 
-                DropdownMenuItem(
-                    text = {
-                        Text("B-101")
-                    },
-                    onClick = {
-                        selectedBus = "B-101"
-                        expanded = false
-                    }
-                )
-
-                DropdownMenuItem(
-                    text = {
-                        Text("B-301")
-                    },
-                    onClick = {
-                        selectedBus = "B-301"
-                        expanded = false
-                    }
-                )
+                    DropdownMenuItem(
+                        text = {
+                            Text(bus.busNumber)
+                        },
+                        onClick = {
+                            selectedBus = bus.busNumber
+                            selectedBusId = bus.id
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
         Spacer(modifier = Modifier.height(20.dp))
@@ -294,7 +298,11 @@ val context = LocalContext.current
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("••••••••") },
                 leadingIcon = {
-                    Icon(imageVector = Icons.Default.Lock, contentDescription = null, tint = Color.Gray)
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
                 },
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -324,12 +332,7 @@ val context = LocalContext.current
 
         Button(
             onClick = {
-                val busId = when (selectedBus) {
-                    "B-204" -> 1L
-                    "B-101" -> 2L
-                    "B-301" -> 3L
-                    else -> -1L
-                }
+                val busId = selectedBusId ?: -1L
 
                 viewModel.signup(
                     name = name,

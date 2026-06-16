@@ -10,6 +10,8 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,7 +20,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.trackmybus.session.SessionManager
+import com.example.trackmybus.viewmodel.StudentHomeViewModel
 
 @Composable
 fun StudentHome(
@@ -27,6 +31,15 @@ fun StudentHome(
     onAlertsClick: () -> Unit,
     onProfileClick: () -> Unit
 ) {
+    val viewModel: StudentHomeViewModel = viewModel()
+
+    val bus by viewModel.bus
+    LaunchedEffect(Unit) {
+        println("HOME NAME = ${SessionManager.studentName}")
+        println("HOME BUS ID = ${SessionManager.busId}")
+
+        viewModel.loadBus()
+    }
     Scaffold(
         bottomBar = {
             NavigationBar(
@@ -143,7 +156,9 @@ fun StudentHome(
                                 Text("On the way", color = Color.White, fontSize = 12.sp)
                             }
                         }
-                        Text("Route 12", color = Color.White, fontSize = 14.sp)
+                        Text(bus?.routeName ?: "Loading...",
+                            color = Color.White,
+                            fontSize = 14.sp)
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -155,7 +170,10 @@ fun StudentHome(
                     ) {
                         Column {
                             Text("Bus number", color = Color.White.copy(alpha = 0.7f), fontSize = 14.sp)
-                            Text("B-204", color = Color.White, fontSize = 36.sp, fontWeight = FontWeight.Bold)
+                            Text(bus?.busNumber ?: "--",
+                                color = Color.White,
+                                fontSize = 36.sp,
+                                fontWeight = FontWeight.Bold)
                         }
                         Surface(
                             modifier = Modifier.size(56.dp),
@@ -173,7 +191,9 @@ fun StudentHome(
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         InfoItem(Icons.Default.Schedule, "ETA", "8 min")
                         InfoItem(Icons.Default.LocationOn, "Next stop", "Library")
-                        InfoItem(Icons.Default.Group, "Seats", "25/40")
+                        InfoItem( Icons.Default.Group,
+                            "Seats",
+                            "${bus?.currentOccupancy ?: 0}/${bus?.seatCapacity ?: 0}")
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -221,14 +241,14 @@ fun StudentHome(
                     UpdateItem(
                         icon = Icons.Default.Notifications,
                         iconBg = Color(0xFFF0EDFF),
-                        title = "Bus B-204 is approaching Library",
+                        title = "Bus ${bus?.busNumber ?: ""} is on the way",
                         time = "2 min ago"
                     )
                     HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = Color(0xFFF0F0F0))
                     UpdateItem(
                         icon = Icons.Default.Notifications,
                         iconBg = Color(0xFFFFF3E0),
-                        title = "Route 12 schedule updated",
+                        title = "${bus?.routeName ?: "Route"} schedule updated",
                         time = "1 hr ago"
                     )
                 }
