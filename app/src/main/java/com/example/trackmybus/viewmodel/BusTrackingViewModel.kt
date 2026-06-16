@@ -27,8 +27,7 @@ class BusTrackingViewModel : ViewModel() {
                 println("LOCATION RESPONSE = ${response.body()}")
                 if (response.isSuccessful) {
 
-                    location.value =
-                        response.body() as Location?
+                    location.value = response.body()
 
                     println(
                         "BUS LOCATION = ${response.body()}"

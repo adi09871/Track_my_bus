@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.trackmybus.service.LocationForegroundService
+import com.example.trackmybus.session.SessionManager
 import com.example.trackmybus.viewmodel.DriverHomeViewModel
 
 @Composable
@@ -79,8 +80,9 @@ fun DriverHome(
         }
 
     LaunchedEffect(Unit) {
-
-
+        println("DEBUG: DriverHome Composable Recomposed/Launched")
+        println("DEBUG: Current studentName = ${SessionManager.studentName}") // Just in case
+        println("DEBUG: Current busId in Session = ${SessionManager.busId}")
         viewModel.loadBus()
     }
 
@@ -327,7 +329,7 @@ fun DriverHome(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-
+                        println("DRIVER BUS ID = ${SessionManager.busId}")
                         Button(
                             onClick = {
                                 println("START BUTTON CLICKED")
@@ -370,7 +372,9 @@ fun DriverHome(
                                 containerColor = Color(0xFF6A39FF)
                             ),
                             enabled = bus?.isTripActive != true
-                        ) {
+
+                        )
+                        {
                             Icon(Icons.Default.PlayArrow, null)
 
                             Spacer(modifier = Modifier.width(8.dp))

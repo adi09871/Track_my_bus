@@ -1,6 +1,5 @@
 package com.example.trackmybus.network
 
-import android.health.connect.datatypes.ExerciseRoute
 import com.example.trackmybus.model.Bus
 import com.example.trackmybus.model.BusCreateRequest
 import com.example.trackmybus.model.BusCreateResponse
@@ -100,5 +99,5 @@ interface ApiService {
     @GET("location/{busId}")
     suspend fun getCurrentLocation(
         @Path("busId") busId: Long
-    ): Response<ExerciseRoute.Location>
+    ): Response<com.example.trackmybus.model.Location>
 }

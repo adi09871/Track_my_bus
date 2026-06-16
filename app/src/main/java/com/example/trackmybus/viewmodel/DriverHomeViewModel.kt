@@ -19,42 +19,30 @@ class DriverHomeViewModel : ViewModel(){
     var stopsCount by mutableStateOf(0)
         private set
     fun loadBus() {
+        println("DEBUG: loadBus() triggered")
+        println("DEBUG: driverId = ${SessionManager.driverId}")
+        println("DEBUG: busId in Session = ${SessionManager.busId}")
 
         viewModelScope.launch {
-
             try {
-
-                val response =
-                    repository.getBusesByDriverId(
-                        SessionManager.driverId
-                    )
+                // Fetch the specific bus directly by its ID
+                val response = repository.getBusById(SessionManager.busId)
 
                 if (response.isSuccessful) {
-
-                    val buses =
-                        response.body() ?: emptyList()
-
-                    bus = buses.find {
-                        it.id == SessionManager.busId
-                    }
+                    bus = response.body()
+                    println("DEBUG: API Call Successful. Bus loaded: $bus")
+                } else {
+                    println("DEBUG: API Call Failed. Code: ${response.code()}, Error: ${response.errorBody()?.string()}")
                 }
-                val stopsResponse =
-                    repository.getStopsByBusId(
-                        SessionManager.busId
-                    )
 
+                val stopsResponse = repository.getStopsByBusId(SessionManager.busId)
                 if (stopsResponse.isSuccessful) {
-
-                    stopsCount =
-                        stopsResponse.body()?.size ?: 0
-                    println("SESSION BUS ID = ${SessionManager.busId}")
-                    println("BUS LOADED = ${bus?.id}")
-                    println("STOPS COUNT = $stopsCount")
-
+                    stopsCount = stopsResponse.body()?.size ?: 0
+                    println("DEBUG: STOPS COUNT = $stopsCount")
                 }
 
             } catch (e: Exception) {
-
+                println("DEBUG: Exception in loadBus(): ${e.message}")
                 e.printStackTrace()
             }
         }
