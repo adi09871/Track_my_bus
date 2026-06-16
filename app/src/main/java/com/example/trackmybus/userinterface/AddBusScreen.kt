@@ -266,12 +266,12 @@ fun AddBusScreen(
 
             if (busList.isNotEmpty()) {
                 Text(
-                    text = "Select existing bus",
+                    text = "Select bus",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Recently used vehicles",
+                    text = "All available vehicles",
                     fontSize = 14.sp,
                     color = Color.Gray
                 )

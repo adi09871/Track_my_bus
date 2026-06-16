@@ -213,7 +213,7 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCl
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    if (success) {
+                    if (success && studentId != -1L) {
 
                         SessionManager.studentId =
                             studentId
@@ -225,6 +225,9 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCl
                             busId
 
                         onLoginSuccess()
+                    } else if (success) {
+                         // Backend returned 200 but failed login logic
+                         Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
                     }
                 }
             },
@@ -236,6 +239,7 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCl
         ) {
             Text(text = "Log in", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
+        println("STUDENT BUS ID = ${SessionManager.busId}")
 
         Spacer(modifier = Modifier.height(16.dp))
 

@@ -73,9 +73,10 @@ class MainActivity : ComponentActivity() {
                         StudentSignup(
                             onBackClick = { navController.popBackStack() },
                             onSignupSuccess = {
-                                navController.navigate("studenthome") {
-                                    popUpTo("optionscreen") { inclusive = true }
+                                navController.navigate("studentlogin") {
+                                    popUpTo("studentsignup") { inclusive = true }
                                 }
+
                             }
                         )
                     }

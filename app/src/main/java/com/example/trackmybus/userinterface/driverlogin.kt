@@ -224,7 +224,7 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    if (success) {
+                    if (success && driverId != -1L) {
 
                         SessionManager.driverId = driverId
 
@@ -234,6 +234,9 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
                         )
 
                         onLoginSuccess()
+                    } else if (success && driverId == -1L) {
+                        // Backend returned 200 but failed login (mocked or error in body)
+                        Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

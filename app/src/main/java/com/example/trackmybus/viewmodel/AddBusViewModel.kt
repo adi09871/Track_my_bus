@@ -28,9 +28,7 @@ class AddBusViewModel : ViewModel() {
             try {
 
                 val response =
-                    repository.getBusesByDriverId(
-                        SessionManager.driverId
-                    )
+                    repository.getAllBuses()
 
                 if (response.isSuccessful) {
 

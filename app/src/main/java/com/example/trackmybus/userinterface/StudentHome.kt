@@ -189,9 +189,10 @@ fun StudentHome(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        InfoItem(Icons.Default.Schedule, "ETA", "8 min")
-                        InfoItem(Icons.Default.LocationOn, "Next stop", "Library")
-                        InfoItem( Icons.Default.Group,
+                        InfoItem(  Icons.Default.Route,
+                            "Stops",
+                            "${viewModel.totalStops.value}")
+                        InfoItem(  Icons.Default.Group,
                             "Seats",
                             "${bus?.currentOccupancy ?: 0}/${bus?.seatCapacity ?: 0}")
                     }
@@ -213,46 +214,8 @@ fun StudentHome(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                SmallActionCard(Modifier.weight(1f), "My route", "12 stops • 14 km")
-                SmallActionCard(Modifier.weight(1f), "Schedule", "6 trips today")
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Recent updates", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                TextButton(onClick = { }) {
-                    Text("See all", color = Color(0xFF6A39FF))
-                }
-            }
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column {
-                    UpdateItem(
-                        icon = Icons.Default.Notifications,
-                        iconBg = Color(0xFFF0EDFF),
-                        title = "Bus ${bus?.busNumber ?: ""} is on the way",
-                        time = "2 min ago"
-                    )
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = Color(0xFFF0F0F0))
-                    UpdateItem(
-                        icon = Icons.Default.Notifications,
-                        iconBg = Color(0xFFFFF3E0),
-                        title = "${bus?.routeName ?: "Route"} schedule updated",
-                        time = "1 hr ago"
-                    )
-                }
-            }
+            SmallActionCard(Modifier.fillMaxWidth(),  "Route",
+                "${bus?.routeName ?: ""} • ${viewModel.totalStops.value} Stops")
         }
     }
 }
@@ -285,28 +248,10 @@ fun SmallActionCard(modifier: Modifier, title: String, subtitle: String) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(title, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Text(subtitle, color = Color.Gray, fontSize = 12.sp)
-        }
-    }
-}
-
-@Composable
-fun UpdateItem(icon: ImageVector, iconBg: Color, title: String, time: String) {
-    Row(
-        modifier = Modifier.padding(16.dp).fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Surface(modifier = Modifier.size(40.dp), shape = CircleShape, color = iconBg) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(icon, null, modifier = Modifier.size(20.dp), tint = Color(0xFF6A39FF))
+            if (subtitle.isNotEmpty()) {
+                Text(subtitle, color = Color.Gray, fontSize = 12.sp)
             }
         }
-        Spacer(modifier = Modifier.width(12.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(title, fontSize = 14.sp, fontWeight = FontWeight.Medium)
-            Text(time, fontSize = 12.sp, color = Color.Gray)
-        }
-        Icon(Icons.Default.ChevronRight, null, tint = Color.LightGray)
     }
 }
 

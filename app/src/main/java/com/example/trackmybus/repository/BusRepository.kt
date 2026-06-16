@@ -61,4 +61,10 @@ class BusRepository {
         RetrofitInstance.api.updateLocation(
             request
         )
+
+    suspend fun getAllBuses() =
+        RetrofitInstance.api.getAllBuses()
+
+    suspend fun getBusById(busId: Long) =
+        RetrofitInstance.api.getBusById(busId)
 }
