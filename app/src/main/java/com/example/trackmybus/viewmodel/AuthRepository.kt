@@ -2,6 +2,7 @@ package com.example.trackmybus.viewmodel
 
 import com.example.trackmybus.model.DriverLoginRequest
 import com.example.trackmybus.model.DriverRegisterRequest
+import com.example.trackmybus.model.SaveTokenRequest
 import com.example.trackmybus.model.StudentLoginRequest
 import com.example.trackmybus.model.StudentRegisterRequest
 import com.example.trackmybus.network.RetrofitInstance
@@ -31,6 +32,12 @@ class AuthRepository {
         request: DriverRegisterRequest
     ) =
         RetrofitInstance.api.driverRegister(
+            request
+        )
+    suspend fun saveToken(
+        request: SaveTokenRequest
+    ) =
+        RetrofitInstance.api.saveToken(
             request
         )
 }

@@ -52,8 +52,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.trackmybus.R
+import com.example.trackmybus.model.SaveTokenRequest
 import com.example.trackmybus.session.SessionManager
+import com.example.trackmybus.viewmodel.AuthRepository
 import com.example.trackmybus.viewmodel.StudentLoginViewModel
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -223,6 +229,30 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCl
 
                         SessionManager.busId =
                             busId
+
+                        FirebaseMessaging
+                            .getInstance()
+                            .token
+                            .addOnSuccessListener { token ->
+
+                                CoroutineScope(
+                                    Dispatchers.IO
+                                ).launch {
+
+                                    try {
+
+                                        AuthRepository()
+                                            .saveToken(
+                                                SaveTokenRequest(
+                                                    studentId = studentId,
+                                                    fcmToken = token
+                                                )
+                                            )
+
+                                    } catch (_: Exception) {
+                                    }
+                                }
+                            }
 
                         onLoginSuccess()
                     } else if (success) {

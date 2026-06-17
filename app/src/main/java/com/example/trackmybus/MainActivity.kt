@@ -13,26 +13,42 @@ import com.example.trackmybus.session.SessionManager
 import com.example.trackmybus.ui.theme.TrackMyBusTheme
 import com.example.trackmybus.userinterface.AddBusScreen
 import com.example.trackmybus.userinterface.AddStopsScreen
-import com.example.trackmybus.userinterface.DriverLogin
-import com.example.trackmybus.userinterface.DriverSignup
-import com.example.trackmybus.userinterface.OptionScreen
 import com.example.trackmybus.userinterface.AlertsScreen
 import com.example.trackmybus.userinterface.BusTrackingScreen
 import com.example.trackmybus.userinterface.DriverHome
 import com.example.trackmybus.userinterface.DriverLiveTripScreen
+import com.example.trackmybus.userinterface.DriverLogin
 import com.example.trackmybus.userinterface.DriverProfileScreen
+import com.example.trackmybus.userinterface.DriverSignup
+import com.example.trackmybus.userinterface.OptionScreen
 import com.example.trackmybus.userinterface.ProfileScreen
 import com.example.trackmybus.userinterface.StudentHome
 import com.example.trackmybus.userinterface.StudentLogin
 import com.example.trackmybus.userinterface.StudentSignup
 import com.example.trackmybus.userinterface.splashscreen
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?
+
+    ) {
         super.onCreate(savedInstanceState)
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+
+                if (!task.isSuccessful) {
+                    return@addOnCompleteListener
+                }
+
+                val token = task.result
+
+                println(
+                    "FCM TOKEN = $token"
+                )
+            }
         enableEdgeToEdge()
         setContent {
             TrackMyBusTheme {

@@ -8,6 +8,7 @@ import com.example.trackmybus.model.DriverLoginResponse
 import com.example.trackmybus.model.DriverRegisterRequest
 import com.example.trackmybus.model.LocationUpdateRequest
 import com.example.trackmybus.model.SaveStopsRequest
+import com.example.trackmybus.model.SaveTokenRequest
 import com.example.trackmybus.model.Stop
 import com.example.trackmybus.model.StudentLoginRequest
 import com.example.trackmybus.model.StudentLoginResponse
@@ -100,4 +101,10 @@ interface ApiService {
     suspend fun getCurrentLocation(
         @Path("busId") busId: Long
     ): Response<com.example.trackmybus.model.Location>
+
+    @POST("students/save-token")
+    suspend fun saveToken(
+        @Body request: SaveTokenRequest
+    ): Response<String>
+
 }

@@ -13,6 +13,21 @@ class BusTrackingViewModel : ViewModel() {
     var location = mutableStateOf<Location?>(null)
         private set
 
+    var busNumber = mutableStateOf<String?>(null)
+        private set
+
+    fun loadBusDetails() {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.api.getBusById(SessionManager.busId)
+                if (response.isSuccessful) {
+                    busNumber.value = response.body()?.busNumber
+                }
+            } catch (_: Exception) {
+            }
+        }
+    }
+
     fun loadBusLocation() {
         viewModelScope.launch {
             try {

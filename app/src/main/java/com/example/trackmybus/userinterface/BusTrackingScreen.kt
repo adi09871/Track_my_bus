@@ -36,11 +36,14 @@ fun BusTrackingScreen(
 ) {
     val context = LocalContext.current
     var isExpanded by remember { mutableStateOf(false) }
+    var recenterTrigger by remember { mutableStateOf(0) }
     val viewModel: BusTrackingViewModel = viewModel()
 
     val location by viewModel.location
+    val busNumber by viewModel.busNumber
 
     LaunchedEffect(Unit) {
+        viewModel.loadBusDetails()
         while (true) {
             viewModel.loadBusLocation()
             delay(5000.milliseconds)
@@ -52,12 +55,12 @@ fun BusTrackingScreen(
                 title = {
                     Column {
                         Text(
-                            text = "Bus B-204",
+                            text = if (busNumber != null) "Bus $busNumber" else "Bus",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Route 12 • Live Tracking",
+                            text = "Live Tracking",
                             fontSize = 13.sp,
                             color = Color.Gray
                         )
@@ -109,7 +112,7 @@ fun BusTrackingScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { },
+                onClick = { recenterTrigger++ },
                 containerColor = Color.White,
                 contentColor = Color(0xFF6A39FF),
                 shape = CircleShape,
@@ -128,7 +131,8 @@ fun BusTrackingScreen(
             OpenStreetMapView(
                 context = context,
                 latitude = location?.latitude ?: 0.0,
-                longitude = location?.longitude ?: 0.0
+                longitude = location?.longitude ?: 0.0,
+                recenterTrigger = recenterTrigger
             )
 
             // Bottom Info Card

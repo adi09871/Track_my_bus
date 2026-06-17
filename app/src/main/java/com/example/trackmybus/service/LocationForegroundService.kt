@@ -13,7 +13,12 @@ import com.example.trackmybus.R
 import com.example.trackmybus.model.LocationUpdateRequest
 import com.example.trackmybus.repository.BusRepository
 import com.example.trackmybus.session.SessionManager
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -63,6 +68,15 @@ class LocationForegroundService : Service() {
             }
 
         startLocationUpdates()
+    }
+
+    override fun onStartCommand(
+        intent: Intent?,
+        flags: Int,
+        startId: Int
+    ): Int {
+
+        return START_STICKY
     }
 
     private fun updateBusLocation(
