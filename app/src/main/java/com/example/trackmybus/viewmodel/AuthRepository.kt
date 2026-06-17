@@ -40,4 +40,11 @@ class AuthRepository {
         RetrofitInstance.api.saveToken(
             request
         )
+
+    suspend fun getNotifications(
+        studentId: Long
+    ) =
+        RetrofitInstance.api.getNotifications(
+            studentId
+        )
 }

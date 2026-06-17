@@ -12,26 +12,30 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
-import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.trackmybus.session.SessionManager
+import com.example.trackmybus.viewmodel.AlertsViewModel
 
 @Composable
 fun AlertsScreen(
     onHomeClick: () -> Unit,
     onTrackClick: () -> Unit,
-    onProfileClick: () -> Unit
+    onProfileClick: () -> Unit,
+    viewModel: AlertsViewModel = viewModel()
 ) {
-    var selectedTab by remember { mutableIntStateOf(0) }
-    val tabs = listOf("All", "Unread", "Trips")
+    LaunchedEffect(Unit) {
+        viewModel.loadNotifications(SessionManager.studentId)
+    }
 
     Scaffold(
         bottomBar = {
@@ -88,68 +92,44 @@ fun AlertsScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Tabs
-            ScrollableTabRow(
-                selectedTabIndex = selectedTab,
-                containerColor = Color.Transparent,
-                contentColor = Color(0xFF6A39FF),
-                edgePadding = 0.dp,
-                divider = {},
-                indicator = { tabPositions ->
-                    if (selectedTab < tabPositions.size) {
-                        SecondaryIndicator(
-                            modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                            color = Color(0xFF6A39FF)
+            if (viewModel.isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = Color(0xFF6A39FF))
+                }
+            } else if (viewModel.notifications.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "No notifications available",
+                        fontSize = 16.sp,
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(bottom = 20.dp)
+                ) {
+                    items(viewModel.notifications) { notification ->
+                        val icon = when {
+                            notification.title.contains("Trip", ignoreCase = true) -> Icons.Default.DirectionsBus
+                            notification.title.contains("Schedule", ignoreCase = true) -> Icons.Default.Schedule
+                            notification.title.contains("Traffic", ignoreCase = true) || notification.title.contains("Warning", ignoreCase = true) -> Icons.Default.Warning
+                            else -> Icons.Default.Notifications
+                        }
+
+                        AlertItem(
+                            AlertData(
+                                title = notification.message,
+                                time = notification.title, // As requested: notification.title as secondary text
+                                icon = icon,
+                                iconBg = Color(0xFFF0EDFF),
+                                iconTint = Color(0xFF6A39FF),
+                                isToday = true, // We don't have this info from backend in a simple way, but can assume true or just hide it
+                                isUnread = !notification.isRead
+                            )
                         )
                     }
-                }
-            ) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTab == index,
-                        onClick = { selectedTab = index },
-                        text = {
-                            Text(
-                                text = title,
-                                fontSize = 16.sp,
-                                fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
-                            )
-                        }
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(bottom = 20.dp)
-            ) {
-                item {
-                    Text(
-                        text = "Today",
-                        fontSize = 14.sp,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-                }
-                
-                items(alertList.filter { it.isToday }) { alert ->
-                    AlertItem(alert)
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Yesterday",
-                        fontSize = 14.sp,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-                }
-
-                items(alertList.filter { !it.isToday }) { alert ->
-                    AlertItem(alert)
                 }
             }
         }
@@ -224,50 +204,6 @@ data class AlertData(
     val iconTint: Color,
     val isToday: Boolean,
     val isUnread: Boolean = false
-)
-
-val alertList = listOf(
-    AlertData(
-        "Bus B-204 is approaching Library",
-        "2 min ago",
-        Icons.Default.DirectionsBus,
-        Color(0xFFF0EDFF),
-        Color(0xFF6A39FF),
-        true,
-        true
-    ),
-    AlertData(
-        "Route 12 schedule updated",
-        "1 hr ago",
-        Icons.Default.Schedule,
-        Color(0xFFFFF3E0),
-        Color(0xFFF57C00),
-        true
-    ),
-    AlertData(
-        "Heavy traffic on College Road",
-        "3 hrs ago",
-        Icons.Default.Warning,
-        Color(0xFFFDE7E9),
-        Color(0xFFE53935),
-        true
-    ),
-    AlertData(
-        "Bus B-205 is now at Main Gate",
-        "Yesterday, 08:30 AM",
-        Icons.Default.DirectionsBus,
-        Color(0xFFF0EDFF),
-        Color(0xFF6A39FF),
-        false
-    ),
-    AlertData(
-        "Weekly trip report available",
-        "Yesterday, 06:00 PM",
-        Icons.Default.Assessment,
-        Color(0xFFE8F5E9),
-        Color(0xFF4CAF50),
-        false
-    )
 )
 
 @Preview(showBackground = true)
