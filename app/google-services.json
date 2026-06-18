@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "359186828357",
+    "project_id": "trackmybus-aa613",
+    "storage_bucket": "trackmybus-aa613.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:359186828357:android:e427e4d21431d77beda72c",
+        "android_client_info": {
+          "package_name": "com.aditya.trackmybus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWnlU_h7LiZxaBMBZcOKUrsqAir3i5ZBU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
