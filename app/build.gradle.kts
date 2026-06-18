@@ -7,7 +7,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "2.4.0"}
 
 android {
-    namespace = "com.example.trackmybus"
+    namespace = "com.aditya.trackmybus"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -15,7 +15,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.trackmybus"
+        applicationId = "com.aditya.trackmybus"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
