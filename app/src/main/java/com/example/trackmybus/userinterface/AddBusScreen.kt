@@ -2,49 +2,16 @@ package com.example.trackmybus.userinterface
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.DirectionsBus
-import androidx.compose.material.icons.filled.Groups
-import androidx.compose.material.icons.filled.Route
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -68,7 +35,24 @@ fun AddBusScreen(
     var busNumber by remember { mutableStateOf("") }
     var seatCapacity by remember { mutableStateOf("") }
     var routeName by remember { mutableStateOf("") }
+    
+    var showSuccessDialog by remember { mutableStateOf(false) }
+    var successMessage by remember { mutableStateOf("") }
+    var createdBusId by remember { mutableStateOf(-1L) }
+
     val context = LocalContext.current
+
+    if (showSuccessDialog) {
+        BrandedDialog(
+            title = "Bus Created Successfully",
+            message = successMessage,
+            onConfirm = {
+                showSuccessDialog = false
+                SessionManager.busId = createdBusId
+                onCreateBusClick(busNumber, seatCapacity, routeName)
+            }
+        )
+    }
 
 
     LaunchedEffect(Unit) {
@@ -83,25 +67,26 @@ fun AddBusScreen(
                         Text(
                             text = "Add bus",
                             fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = "Set up a vehicle to begin tracking",
                             fontSize = 14.sp,
-                            color = Color.Gray,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Normal
                         )
                     }
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         },
-        containerColor = Color(0xFFF8FBFF)
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -113,21 +98,21 @@ fun AddBusScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Surface(
                             modifier = Modifier.size(48.dp),
-                            color = Color(0xFFF0EDFF),
+                            color = MaterialTheme.colorScheme.tertiary,
                             shape = CircleShape
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     Icons.Default.DirectionsBus,
                                     contentDescription = null,
-                                    tint = Color(0xFF6A39FF)
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             }
                         }
@@ -136,11 +121,12 @@ fun AddBusScreen(
                             Text(
                                 text = "Create new bus",
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp
+                                fontSize = 18.sp,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = "Register vehicle details",
-                                color = Color.Gray,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 14.sp
                             )
                         }
@@ -148,64 +134,70 @@ fun AddBusScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    Text("Bus number", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color.Gray)
+                    Text("Bus number", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = busNumber,
                         onValueChange = { busNumber = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("e.g. B-204", color = Color.LightGray) },
-                        leadingIcon = { Icon(Icons.Default.DirectionsBus, contentDescription = null, tint = Color.Gray) },
+                        placeholder = { Text("e.g. B-204") },
+                        leadingIcon = { Icon(Icons.Default.DirectionsBus, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                         shape = RoundedCornerShape(20.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color(0xFFE0E0E0),
-                            focusedBorderColor = Color(0xFF6A39FF),
-                            focusedTextColor = Color.Black,
-                            unfocusedTextColor = Color.Black
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                         )
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Text("Total seat capacity", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color.Gray)
+                    Text("Total seat capacity", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = seatCapacity,
                         onValueChange = { seatCapacity = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("e.g. 40", color = Color.LightGray) },
-                        leadingIcon = { Icon(Icons.Default.Groups, contentDescription = null, tint = Color.Gray) },
+                        placeholder = { Text("e.g. 40") },
+                        leadingIcon = { Icon(Icons.Default.Groups, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                         trailingIcon = {
                             Column {
-                                Icon(Icons.Default.ArrowDropUp, contentDescription = null, tint = Color.Gray)
-                                Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = Color.Gray)
+                                Icon(Icons.Default.ArrowDropUp, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         },
                         shape = RoundedCornerShape(20.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color(0xFFE0E0E0),
-                            focusedBorderColor = Color(0xFF6A39FF),
-                            focusedTextColor = Color.Black,
-                            unfocusedTextColor = Color.Black
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                         )
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Text("Route name", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color.Gray)
+                    Text("Route name", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = routeName,
                         onValueChange = { routeName = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("e.g. Campus → Sector 14", color = Color.LightGray) },
-                        leadingIcon = { Icon(Icons.Default.Route, contentDescription = null, tint = Color.Gray) },
+                        placeholder = { Text("e.g. Campus → Sector 14") },
+                        leadingIcon = { Icon(Icons.Default.Route, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) },
                         shape = RoundedCornerShape(20.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color(0xFFE0E0E0),
-                            focusedBorderColor = Color(0xFF6A39FF),
-                            focusedTextColor = Color.Black,
-                            unfocusedTextColor = Color.Black
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                         )
                     )
 
@@ -218,29 +210,18 @@ fun AddBusScreen(
                                 seatCapacity = seatCapacity,
                                 routeName = routeName
                             ) { busId, message ->
-
-                                SessionManager.busId = busId
-
-                                Toast.makeText(
-                                    context,
-                                    message,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-
-                                onCreateBusClick(
-                                    busNumber,
-                                    seatCapacity,
-                                    routeName
-                                )
+                                createdBusId = busId
+                                successMessage = message
+                                showSuccessDialog = true
                             }
                         },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
                         shape = RoundedCornerShape(28.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6A39FF))
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
-                        Text(text = "Create bus", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        Text(text = "Create bus", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     }
                 }
             }
@@ -251,15 +232,15 @@ fun AddBusScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                HorizontalDivider(modifier = Modifier.weight(1f), color = Color(0xFFE0E0E0))
+                HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
                 Text(
                     text = "OR",
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium
                 )
-                HorizontalDivider(modifier = Modifier.weight(1f), color = Color(0xFFE0E0E0))
+                HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
             }
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -268,18 +249,19 @@ fun AddBusScreen(
                 Text(
                     text = "Select bus",
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = "All available vehicles",
                     fontSize = 14.sp,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(24.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                 ) {
                     Column {
@@ -295,7 +277,7 @@ fun AddBusScreen(
                             if (index < busList.lastIndex) {
                                 HorizontalDivider(
                                     modifier = Modifier.padding(horizontal = 16.dp),
-                                    color = Color(0xFFF0F0F0)
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f)
                                 )
                             }
                         }
@@ -320,13 +302,22 @@ fun BusListItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Text(text = details, color = Color.Gray, fontSize = 14.sp)
+            Text(
+                text = name,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = details,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 14.sp
+            )
         }
         Icon(
             Icons.Default.ChevronRight,
             contentDescription = null,
-            tint = Color.Gray
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

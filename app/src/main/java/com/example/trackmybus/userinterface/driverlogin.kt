@@ -18,21 +18,8 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -57,12 +44,29 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    
+    var showSuccessDialog by remember { mutableStateOf(false) }
+    var successMessage by remember { mutableStateOf("") }
+    var loggedDriverId by remember { mutableStateOf(-1L) }
+
     val context = LocalContext.current
     val viewModel: DriverLoginViewModel = viewModel()
+
+    if (showSuccessDialog) {
+        BrandedDialog(
+            title = "Login Successful",
+            message = successMessage,
+            onConfirm = {
+                showSuccessDialog = false
+                SessionManager.driverId = loggedDriverId
+                onLoginSuccess()
+            }
+        )
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8FBFF))
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -70,7 +74,7 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
 
         Surface(
             modifier = Modifier.size(80.dp),
-            color = Color(0xFF6A39FF),
+            color = MaterialTheme.colorScheme.primary,
             shape = RoundedCornerShape(24.dp)
         ) {
             Box(contentAlignment = Alignment.Center) {
@@ -89,7 +93,7 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
             text = "DRIVER PORTAL",
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             letterSpacing = 1.sp
         )
 
@@ -100,13 +104,13 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
                 text = "Driver sign in",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Use your work email and password",
                 fontSize = 16.sp,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -117,29 +121,29 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
                 text = "Email",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF667085)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("driver@college.edu", color = Color.LightGray) },
+                placeholder = { Text("driver@college.edu") },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Outlined.Email,
                         contentDescription = null,
-                        tint = Color.Gray
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
                 shape = RoundedCornerShape(24.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF6A39FF),
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
@@ -153,19 +157,19 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
                 text = "Password",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF667085)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("••••••••", color = Color.LightGray) },
+                placeholder = { Text("••••••••") },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Outlined.Lock,
                         contentDescription = null,
-                        tint = Color.Gray
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
                 trailingIcon = {
@@ -173,19 +177,19 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
                         Icon(
                             imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                             contentDescription = null,
-                            tint = Color.Gray
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 shape = RoundedCornerShape(24.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF6A39FF),
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
@@ -197,7 +201,7 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
             Text(
                 text = "Forgot password?",
-                color = Color(0xFF6A39FF),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.clickable { /* Handle Forgot Password */ }
@@ -212,18 +216,16 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
                     email = email,
                     password = password
                 ) { success, message, driverId ->
-
-                    Toast.makeText(
-                        context,
-                        message,
-                        Toast.LENGTH_SHORT
-                    ).show()
-
                     if (success && driverId != -1L) {
-                        SessionManager.driverId = driverId
-                        onLoginSuccess()
-                    } else if (success && driverId == -1L) {
-                        Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
+                        loggedDriverId = driverId
+                        successMessage = "Logged in as ${email.substringBefore("@")}"
+                        showSuccessDialog = true
+                    } else {
+                        Toast.makeText(
+                            context,
+                            message.ifBlank { "Invalid credentials" },
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             },
@@ -232,10 +234,10 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
                 .height(56.dp),
             shape = RoundedCornerShape(28.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF6A39FF)
+                containerColor = MaterialTheme.colorScheme.primary
             )
         ) {
-            Text("Log in")
+            Text("Log in", fontWeight = FontWeight.Bold, color = Color.White)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -246,11 +248,11 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
                 .fillMaxWidth()
                 .height(56.dp),
             shape = RoundedCornerShape(28.dp),
-            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF6A39FF))
+            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
         ) {
             Text(
                 text = "Don't have an account? Sign up",
-                color = Color(0xFF6A39FF),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -260,7 +262,7 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
 
         Text(
             text = "Back to role selection",
-            color = Color(0xFF6A39FF),
+            color = MaterialTheme.colorScheme.primary,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center,

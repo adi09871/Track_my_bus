@@ -57,26 +57,27 @@ fun BusTrackingScreen(
                         Text(
                             text = if (busNumber != null) "Bus $busNumber" else "Bus",
                             fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = "Live Tracking",
                             fontSize = 13.sp,
-                            color = Color.Gray
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         },
         bottomBar = {
             NavigationBar(
-                containerColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.surface,
                 tonalElevation = 8.dp
             ) {
                 NavigationBarItem(
@@ -91,9 +92,9 @@ fun BusTrackingScreen(
                     icon = { Icon(Icons.Default.LocationOn, contentDescription = null) },
                     label = { Text("Track") },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF6A39FF),
-                        selectedTextColor = Color(0xFF6A39FF),
-                        indicatorColor = Color(0xFFF0EDFF)
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        indicatorColor = MaterialTheme.colorScheme.tertiary
                     )
                 )
                 NavigationBarItem(
@@ -113,8 +114,8 @@ fun BusTrackingScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { recenterTrigger++ },
-                containerColor = Color.White,
-                contentColor = Color(0xFF6A39FF),
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.primary,
                 shape = CircleShape,
                 modifier = Modifier.padding(bottom = 16.dp)
             ) {
@@ -126,7 +127,7 @@ fun BusTrackingScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Color(0xFFF0F4F8))
+                .background(MaterialTheme.colorScheme.background)
         ) {
             OpenStreetMapView(
                 context = context,
@@ -143,7 +144,7 @@ fun BusTrackingScreen(
                     .animateContentSize()
                     .clickable { isExpanded = !isExpanded },
                 shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 16.dp)
             ) {
                 Column(
@@ -155,7 +156,7 @@ fun BusTrackingScreen(
                     Box(
                         modifier = Modifier
                             .size(width = 40.dp, height = 4.dp)
-                            .background(Color(0xFFE0E0E0), RoundedCornerShape(2.dp))
+                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), RoundedCornerShape(2.dp))
                             .align(Alignment.CenterHorizontally)
                     )
 
@@ -169,7 +170,7 @@ fun BusTrackingScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Surface(
                                 modifier = Modifier.size(44.dp),
-                                color = Color(0xFF6A39FF),
+                                color = MaterialTheme.colorScheme.primary,
                                 shape = CircleShape
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
@@ -181,18 +182,19 @@ fun BusTrackingScreen(
                                 Text(
                                     text = "In transit",
                                     fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                     text = "On route to College",
                                     fontSize = 12.sp,
-                                    color = Color.Gray
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
                         
                         Surface(
-                            color = Color(0xFFE8F5E9),
+                            color = Color(0xFFE8F5E9), // Keeping green for live status
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Row(
@@ -220,7 +222,7 @@ fun BusTrackingScreen(
 
                             Spacer(modifier = Modifier.height(20.dp))
 
-                            HorizontalDivider(color = Color(0xFFF5F5F5))
+                            HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f))
 
                             Spacer(modifier = Modifier.height(16.dp))
 
@@ -230,11 +232,11 @@ fun BusTrackingScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(Icons.Default.Update, null, modifier = Modifier.size(14.dp), tint = Color.LightGray)
+                                    Icon(Icons.Default.Update, null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                                     Spacer(modifier = Modifier.width(6.dp))
-                                    Text("Updated 30s ago", fontSize = 11.sp, color = Color.LightGray)
+                                    Text("Updated 30s ago", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 }
-                                Text("Driver: R. Mehta", fontSize = 12.sp, color = Color.Gray, fontWeight = FontWeight.Medium)
+                                Text("Driver: R. Mehta", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Medium)
                             }
                         }
                     }
@@ -248,18 +250,18 @@ fun BusTrackingScreen(
 fun TrackingInfoItem(modifier: Modifier, icon: ImageVector, label: String, value: String) {
     Surface(
         modifier = modifier,
-        color = Color(0xFFF8F9FF),
+        color = MaterialTheme.colorScheme.tertiary,
         shape = RoundedCornerShape(16.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF0F0F0))
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f))
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(icon, null, modifier = Modifier.size(14.dp), tint = Color(0xFF6A39FF))
+                Icon(icon, null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.primary)
                 Spacer(modifier = Modifier.width(6.dp))
-                Text(label, color = Color.Gray, fontSize = 11.sp)
+                Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text(value, color = Color.Black, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            Text(value, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, fontWeight = FontWeight.Bold)
         }
     }
 }

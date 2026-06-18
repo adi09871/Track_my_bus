@@ -4,19 +4,21 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.trackmybus.model.SaveStopsRequest
 import com.example.trackmybus.network.RetrofitInstance
 import com.example.trackmybus.session.SessionManager
+import com.example.trackmybus.theme.ThemeManager
 import com.example.trackmybus.ui.theme.TrackMyBusTheme
 import com.example.trackmybus.userinterface.AddBusScreen
 import com.example.trackmybus.userinterface.AddStopsScreen
 import com.example.trackmybus.userinterface.AlertsScreen
 import com.example.trackmybus.userinterface.BusTrackingScreen
 import com.example.trackmybus.userinterface.DriverHome
-import com.example.trackmybus.userinterface.DriverLiveTripScreen
 import com.example.trackmybus.userinterface.DriverLogin
 import com.example.trackmybus.userinterface.DriverProfileScreen
 import com.example.trackmybus.userinterface.DriverSignup
@@ -32,10 +34,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?
-
-    ) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ThemeManager.init(this)
         FirebaseMessaging.getInstance().token
             .addOnCompleteListener { task ->
 
@@ -51,7 +52,8 @@ class MainActivity : ComponentActivity() {
             }
         enableEdgeToEdge()
         setContent {
-            TrackMyBusTheme {
+            val themeMode by ThemeManager.themeMode.collectAsState()
+            TrackMyBusTheme(themeMode = themeMode) {
                 val navController = rememberNavController()
 
                 NavHost(
@@ -223,34 +225,7 @@ class MainActivity : ComponentActivity() {
                                     launchSingleTop = true
                                     restoreState = true
                                 }
-                            },
-                            onTripClick = {
-                                navController.navigate("drivertrip") {
-                                    popUpTo("driverhome") { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
                             }
-                        )
-                    }
-
-                    composable("drivertrip") {
-                        DriverLiveTripScreen(
-                            onBusClick = {
-                                navController.navigate("driverhome") {
-                                    popUpTo("driverhome") { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            onProfileClick = {
-                                navController.navigate("driverprofile") {
-                                    popUpTo("driverhome") { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            onBackClick = { navController.popBackStack() }
                         )
                     }
 
@@ -258,13 +233,6 @@ class MainActivity : ComponentActivity() {
                         DriverProfileScreen(
                             onBusClick = {
                                 navController.navigate("driverhome") {
-                                    popUpTo("driverhome") { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            onTripClick = {
-                                navController.navigate("drivertrip") {
                                     popUpTo("driverhome") { saveState = true }
                                     launchSingleTop = true
                                     restoreState = true

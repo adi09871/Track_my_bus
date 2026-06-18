@@ -37,9 +37,22 @@ fun AddStopsScreen(
 ) {
     val viewModel: AddStopsViewModel = viewModel()
 
+    var showSuccessDialog by remember { mutableStateOf(false) }
+    
     val stops = viewModel.stops
     val selectedStops = stops.filter {
         it.isSelected
+    }
+
+    if (showSuccessDialog) {
+        BrandedDialog(
+            title = "Stops Added Successfully",
+            message = "The bus route has been updated with ${selectedStops.size} stops.",
+            onConfirm = {
+                showSuccessDialog = false
+                onSaveStopsClick(selectedStops.map { it.name })
+            }
+        )
     }
 
     Scaffold(
@@ -50,27 +63,28 @@ fun AddStopsScreen(
                         Text(
                             text = "Add Stops",
                             fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = "Select stops for this bus route",
                             fontSize = 14.sp,
-                            color = Color.Gray,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Normal
                         )
                     }
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.surface
                 )
             )
         },
-        containerColor = Color(0xFFF8FBFF),
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             Surface(
                 modifier = Modifier
@@ -79,19 +93,26 @@ fun AddStopsScreen(
                 color = Color.Transparent
             ) {
                 Button(
-                    onClick = { onSaveStopsClick(selectedStops.map { it.name }) },
+                    onClick = { 
+                        if (selectedStops.isNotEmpty()) {
+                            showSuccessDialog = true
+                        } else {
+                            onSaveStopsClick(emptyList())
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
                     shape = RoundedCornerShape(28.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF6A39FF)
+                        containerColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
                     Text(
                         text = "Save Stops",
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
                     )
                 }
             }
@@ -109,21 +130,21 @@ fun AddStopsScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(24.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                     Column(modifier = Modifier.padding(20.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Surface(
                                 modifier = Modifier.size(48.dp),
-                                color = Color(0xFFF0EDFF),
+                                color = MaterialTheme.colorScheme.tertiary,
                                 shape = CircleShape
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
                                         Icons.Default.DirectionsBus,
                                         contentDescription = null,
-                                        tint = Color(0xFF6A39FF)
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
                             }
@@ -132,11 +153,12 @@ fun AddStopsScreen(
                                 Text(
                                     text = "Bus $busNumber",
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp
+                                    fontSize = 18.sp,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                     text = routeName,
-                                    color = Color.Gray,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 14.sp
                                 )
                             }
@@ -166,18 +188,19 @@ fun AddStopsScreen(
                     Text(
                         text = "Available Stops",
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "${selectedStops.size} selected",
                         fontSize = 14.sp,
-                        color = Color(0xFF6A39FF),
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Medium
                     )
                 }
             }
 
-            // List of Stopsa
+            // List of Stops
             items(stops) { stop ->
                 Card(
                     modifier = Modifier
@@ -190,10 +213,10 @@ fun AddStopsScreen(
                         },
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = if (stop.isSelected) Color(0xFFF0EDFF) else Color.White
+                        containerColor = if (stop.isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.surface
                     ),
                     border = if (stop.isSelected) {
-                        androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF6A39FF))
+                        androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                     } else null,
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                 ) {
@@ -207,7 +230,7 @@ fun AddStopsScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Surface(
                                 modifier = Modifier.size(32.dp),
-                                color = if (stop.isSelected) Color(0xFF6A39FF) else Color(0xFFF8FBFF),
+                                color = if (stop.isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
                                 shape = CircleShape
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
@@ -215,7 +238,7 @@ fun AddStopsScreen(
                                         Icons.Default.Place,
                                         contentDescription = null,
                                         modifier = Modifier.size(16.dp),
-                                        tint = if (stop.isSelected) Color.White else Color.Gray
+                                        tint = if (stop.isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
@@ -224,7 +247,7 @@ fun AddStopsScreen(
                                 text = stop.name,
                                 fontSize = 16.sp,
                                 fontWeight = if (stop.isSelected) FontWeight.Bold else FontWeight.Medium,
-                                color = if (stop.isSelected) Color(0xFF6A39FF) else Color.Black
+                                color = if (stop.isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -232,7 +255,7 @@ fun AddStopsScreen(
                             Icon(
                                 Icons.Default.CheckCircle,
                                 contentDescription = "Selected",
-                                tint = Color(0xFF6A39FF),
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -247,7 +270,8 @@ fun AddStopsScreen(
                     Text(
                         text = "Selected Route Preview",
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
@@ -255,7 +279,7 @@ fun AddStopsScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(24.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Column(
@@ -267,7 +291,7 @@ fun AddStopsScreen(
                             selectedStops.forEachIndexed { index, stop ->
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     Surface(
-                                        color = Color(0xFFF0EDFF),
+                                        color = MaterialTheme.colorScheme.tertiary,
                                         shape = RoundedCornerShape(12.dp)
                                     ) {
                                         Text(
@@ -275,7 +299,7 @@ fun AddStopsScreen(
                                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.Bold,
-                                            color = Color(0xFF6A39FF)
+                                            color = MaterialTheme.colorScheme.primary
                                         )
                                     }
                                     
@@ -283,7 +307,7 @@ fun AddStopsScreen(
                                         Icon(
                                             Icons.Default.ArrowDownward,
                                             contentDescription = "to",
-                                            tint = Color.LightGray,
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                             modifier = Modifier
                                                 .padding(vertical = 4.dp)
                                                 .size(20.dp)
@@ -310,7 +334,7 @@ fun BusInfoItem(icon: androidx.compose.ui.graphics.vector.ImageVector, label: St
         modifier = Modifier
             .width(100.dp)
             .height(60.dp),
-        color = Color(0xFFF0F7FF),
+        color = MaterialTheme.colorScheme.tertiary,
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(
@@ -318,11 +342,16 @@ fun BusInfoItem(icon: androidx.compose.ui.graphics.vector.ImageVector, label: St
             verticalArrangement = Arrangement.Center
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(icon, null, modifier = Modifier.size(14.dp), tint = Color.Gray)
+                Icon(icon, null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(text = label, fontSize = 12.sp, color = Color.Gray)
+                Text(text = label, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            Text(text = value, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            Text(
+                text = value,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }

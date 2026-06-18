@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.example.trackmybus.R
 import com.example.trackmybus.model.LocationUpdateRequest
 import com.example.trackmybus.repository.BusRepository
@@ -151,7 +152,7 @@ class LocationForegroundService : Service() {
     }
 
     private fun createNotification(): Notification {
-
+        val logoBitmap = android.graphics.BitmapFactory.decodeResource(resources, R.drawable.logo)
         return NotificationCompat.Builder(
             this,
             "location_channel"
@@ -163,8 +164,10 @@ class LocationForegroundService : Service() {
                 "Live location is being shared"
             )
             .setSmallIcon(
-                R.mipmap.ic_launcher
+                R.drawable.logo
             )
+            .setLargeIcon(logoBitmap)
+            .setColor(ContextCompat.getColor(this, R.color.brand_purple))
             .setPriority(
                 NotificationCompat.PRIORITY_LOW
             )

@@ -1,5 +1,8 @@
 package com.example.trackmybus.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.trackmybus.model.StudentRegisterRequest
@@ -9,6 +12,9 @@ class StudentSignupViewModel : ViewModel() {
 
     private val repository = AuthRepository()
 
+    var isLoading by mutableStateOf(false)
+        private set
+
     fun signup(
         name: String,
         email: String,
@@ -17,11 +23,9 @@ class StudentSignupViewModel : ViewModel() {
         busId: Long,
         onResult: (Boolean, String) -> Unit
     ) {
-
         viewModelScope.launch {
-
+            isLoading = true
             try {
-
                 val response =
                     repository.studentRegister(
                         StudentRegisterRequest(
@@ -34,14 +38,11 @@ class StudentSignupViewModel : ViewModel() {
                     )
 
                 if (response.isSuccessful) {
-
                     onResult(
                         true,
-                        response.body() ?: ""
+                        response.body() ?: "Student Registered Successfully"
                     )
-
                 } else {
-
                     onResult(
                         false,
                         "Registration Failed"
@@ -49,13 +50,13 @@ class StudentSignupViewModel : ViewModel() {
                 }
 
             } catch (e: Exception) {
-
                 onResult(
                     false,
                     e.message ?: "Unknown Error"
                 )
+            } finally {
+                isLoading = false
             }
         }
     }
 }
-

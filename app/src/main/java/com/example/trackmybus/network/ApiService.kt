@@ -5,6 +5,7 @@ import com.example.trackmybus.model.BusCreateRequest
 import com.example.trackmybus.model.BusCreateResponse
 import com.example.trackmybus.model.DriverLoginRequest
 import com.example.trackmybus.model.DriverLoginResponse
+import com.example.trackmybus.model.DriverProfileResponse
 import com.example.trackmybus.model.DriverRegisterRequest
 import com.example.trackmybus.model.LocationUpdateRequest
 import com.example.trackmybus.model.NotificationResponse
@@ -48,6 +49,11 @@ interface ApiService {
     suspend fun driverRegister(
         @Body request: DriverRegisterRequest
     ): Response<String>
+
+    @GET("drivers/{driverId}")
+    suspend fun getDriverById(
+        @Path("driverId") driverId: Long
+    ): Response<DriverProfileResponse>
 
     @POST("buses/create")
     suspend fun createBus(

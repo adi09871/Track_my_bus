@@ -6,10 +6,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.DirectionsBus
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,13 +25,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.trackmybus.R
+import com.example.trackmybus.theme.ThemeManager
+import com.example.trackmybus.theme.ThemeMode
 
 @Composable
 fun OptionScreen(onStudentClick: () -> Unit, onDriverClick: () -> Unit) {
+    val themeMode by ThemeManager.themeMode.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF0EDFF))
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -35,7 +43,7 @@ fun OptionScreen(onStudentClick: () -> Unit, onDriverClick: () -> Unit) {
 
         Surface(
             modifier = Modifier.size(100.dp),
-            color = Color(0xFF6A39FF),
+            color = MaterialTheme.colorScheme.primary,
             shape = RoundedCornerShape(28.dp),
             shadowElevation = 8.dp
         ) {
@@ -55,7 +63,7 @@ fun OptionScreen(onStudentClick: () -> Unit, onDriverClick: () -> Unit) {
             text = "Smart Bus Tracker",
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1A1A1A)
+            color = MaterialTheme.colorScheme.onSurface
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -63,7 +71,7 @@ fun OptionScreen(onStudentClick: () -> Unit, onDriverClick: () -> Unit) {
         Text(
             text = "Real-time college transportation, designed for students and drivers.",
             fontSize = 16.sp,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 16.dp),
             lineHeight = 22.sp
@@ -71,11 +79,52 @@ fun OptionScreen(onStudentClick: () -> Unit, onDriverClick: () -> Unit) {
 
         Spacer(modifier = Modifier.weight(1f))
 
+        // Theme Toggle
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "☀ Light",
+                fontSize = 14.sp,
+                fontWeight = if (themeMode == ThemeMode.LIGHT) FontWeight.Bold else FontWeight.Normal,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Switch(
+                checked = themeMode == ThemeMode.DARK,
+                onCheckedChange = { isDark ->
+                    ThemeManager.setThemeMode(if (isDark) ThemeMode.DARK else ThemeMode.LIGHT)
+                },
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
+            Text(
+                text = "🌙 Dark",
+                fontSize = 14.sp,
+                fontWeight = if (themeMode == ThemeMode.DARK) FontWeight.Bold else FontWeight.Normal,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            TextButton(onClick = { ThemeManager.setThemeMode(ThemeMode.SYSTEM) }) {
+                Text(
+                    text = "System",
+                    fontWeight = if (themeMode == ThemeMode.SYSTEM) FontWeight.Bold else FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Text(
             text = "CONTINUE AS",
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
-            color = Color.Gray.copy(alpha = 0.7f),
+            color = MaterialTheme.colorScheme.onSurface,
             letterSpacing = 1.sp
         )
 
@@ -85,8 +134,8 @@ fun OptionScreen(onStudentClick: () -> Unit, onDriverClick: () -> Unit) {
             title = "Student",
             description = "Track your assigned bus",
             icon = Icons.Default.Person,
-            iconBgColor = Color(0xFFF0EDFF),
-            iconTint = Color(0xFF6A39FF),
+            iconBgColor = MaterialTheme.colorScheme.tertiary,
+            iconTint = MaterialTheme.colorScheme.primary,
             onClick = onStudentClick
         )
 
@@ -96,8 +145,8 @@ fun OptionScreen(onStudentClick: () -> Unit, onDriverClick: () -> Unit) {
             title = "Driver",
             description = "Manage your trip & route",
             icon = Icons.Default.DirectionsBus,
-            iconBgColor = Color(0xFFF0EDFF),
-            iconTint = Color(0xFF6A39FF),
+            iconBgColor = MaterialTheme.colorScheme.tertiary,
+            iconTint = MaterialTheme.colorScheme.primary,
             onClick = onDriverClick
         )
 
@@ -125,7 +174,9 @@ fun SelectionCard(
             .fillMaxWidth()
             .clickable { onClick() },
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -156,12 +207,12 @@ fun SelectionCard(
                     text = title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = description,
                     fontSize = 14.sp,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
