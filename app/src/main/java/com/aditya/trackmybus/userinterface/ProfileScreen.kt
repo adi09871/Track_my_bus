@@ -34,9 +34,12 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = viewModel()
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
+    val studentId = SessionManager.studentId
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchProfile(SessionManager.studentId)
+    LaunchedEffect(studentId) {
+        if (studentId != -1L) {
+            viewModel.fetchProfile(studentId)
+        }
     }
 
     if (showLogoutDialog) {

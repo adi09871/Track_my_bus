@@ -22,8 +22,17 @@ class DriverProfileViewModel : ViewModel() {
     var error by mutableStateOf<String?>(null)
         private set
 
+    private var loadedDriverId: Long = -1
+
     fun fetchProfile(driverId: Long) {
-        Log.d("PROFILE_FLOW", "PROFILE_LOAD_STARTED: driverId = $driverId")
+        if (loadedDriverId != driverId) {
+            Log.d("PROFILE_FLOW", "PREVIOUS_PROFILE_ID: $loadedDriverId")
+            Log.d("PROFILE_FLOW", "CURRENT_DRIVER_ID: $driverId")
+            clearState()
+            Log.d("PROFILE_FLOW", "PROFILE_STATE_CLEARED")
+        }
+
+        Log.d("PROFILE_FLOW", "NEW_PROFILE_FETCH_STARTED: $driverId")
         viewModelScope.launch {
             isLoading = true
             error = null
@@ -33,7 +42,8 @@ class DriverProfileViewModel : ViewModel() {
                     val data = response.body()
                     if (data != null) {
                         profileData = data
-                        Log.d("PROFILE_FLOW", "PROFILE_LOAD_SUCCESS")
+                        loadedDriverId = driverId
+                        Log.d("PROFILE_FLOW", "PROFILE_LOAD_SUCCESS for $driverId")
                     } else {
                         error = "No profile data found"
                     }
@@ -46,5 +56,11 @@ class DriverProfileViewModel : ViewModel() {
                 isLoading = false
             }
         }
+    }
+
+    private fun clearState() {
+        profileData = null
+        error = null
+        loadedDriverId = -1
     }
 }

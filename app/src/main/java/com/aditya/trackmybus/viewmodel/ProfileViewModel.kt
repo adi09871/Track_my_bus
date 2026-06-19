@@ -25,7 +25,13 @@ class ProfileViewModel : ViewModel() {
     var error by mutableStateOf<String?>(null)
         private set
 
+    private var loadedStudentId: Long = -1
+
     fun fetchProfile(studentId: Long) {
+        if (loadedStudentId != studentId) {
+            clearState()
+        }
+
         viewModelScope.launch {
             isLoading = true
             error = null
@@ -33,6 +39,7 @@ class ProfileViewModel : ViewModel() {
                 val response = repository.getStudentProfile(studentId)
                 if (response.isSuccessful) {
                     profileData = response.body()
+                    loadedStudentId = studentId
                     profileData?.busId?.let { busId ->
                         fetchBusDetails(busId)
                     }
@@ -45,6 +52,13 @@ class ProfileViewModel : ViewModel() {
                 isLoading = false
             }
         }
+    }
+
+    private fun clearState() {
+        profileData = null
+        assignedBus = null
+        error = null
+        loadedStudentId = -1
     }
 
     private suspend fun fetchBusDetails(busId: Long) {

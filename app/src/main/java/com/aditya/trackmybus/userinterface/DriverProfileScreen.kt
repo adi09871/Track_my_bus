@@ -28,15 +28,17 @@ fun DriverProfileScreen(
     onLogoutClick: () -> Unit,
     viewModel: DriverProfileViewModel = viewModel()
 ) {
+    android.util.Log.d("PROFILE_FLOW", "PROFILE_COMPOSED")
     var showLogoutDialog by remember { mutableStateOf(false) }
 
-    // Use a derived state to ensure reactivity if driverId changes
-    val driverId by remember { derivedStateOf { SessionManager.driverId } }
+    // Read directly from SessionManager to get the latest value on each recomposition
+    val currentDriverId = SessionManager.driverId
+    android.util.Log.d("PROFILE_FLOW", "CURRENT_DRIVER_ID: $currentDriverId")
 
-    LaunchedEffect(Unit) {
-        android.util.Log.d("PROFILE_FLOW", "PROFILE_SCREEN_OPENED: driverId read as $driverId")
-        if (driverId != -1L) {
-            viewModel.fetchProfile(driverId)
+    LaunchedEffect(currentDriverId) {
+        if (currentDriverId != -1L) {
+            android.util.Log.d("PROFILE_FLOW", "PROFILE_FETCH_TRIGGERED: $currentDriverId")
+            viewModel.fetchProfile(currentDriverId)
         } else {
             android.util.Log.e("PROFILE_FLOW", "DriverProfileScreen: driverId is -1L")
         }
@@ -70,7 +72,7 @@ fun DriverProfileScreen(
                 .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
         ) {
-            if (driverId == -1L) {
+            if (currentDriverId == -1L) {
                 Column(
                     modifier = Modifier.align(Alignment.Center),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -117,7 +119,7 @@ fun DriverProfileScreen(
                         textAlign = TextAlign.Center
                     )
                     Button(
-                        onClick = { viewModel.fetchProfile(SessionManager.driverId) },
+                        onClick = { viewModel.fetchProfile(currentDriverId) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary
                         ),
