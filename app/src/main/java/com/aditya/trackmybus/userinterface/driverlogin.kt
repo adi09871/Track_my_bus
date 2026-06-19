@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aditya.trackmybus.R
-import com.aditya.trackmybus.session.SessionManager
 import com.aditya.trackmybus.viewmodel.DriverLoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,7 +57,6 @@ fun DriverLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCli
             message = successMessage,
             onConfirm = {
                 showSuccessDialog = false
-                SessionManager.driverId = loggedDriverId
                 onLoginSuccess()
             }
         )

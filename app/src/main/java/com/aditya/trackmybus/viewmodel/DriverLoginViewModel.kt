@@ -1,8 +1,10 @@
 package com.aditya.trackmybus.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aditya.trackmybus.model.DriverLoginRequest
+import com.aditya.trackmybus.session.SessionManager
 import kotlinx.coroutines.launch
 
 class DriverLoginViewModel : ViewModel() {
@@ -28,17 +30,23 @@ class DriverLoginViewModel : ViewModel() {
                     )
 
                 if (response.isSuccessful) {
-
                     val loginResponse = response.body()
+                    val driverId = loginResponse?.driverId ?: -1L
+                    
+                    if (driverId != -1L) {
+                        SessionManager.driverId = driverId
+                        Log.d("LOGIN_FLOW", "LOGIN_SUCCESS: driverId = $driverId")
+                        Log.d("LOGIN_FLOW", "DRIVER_ID_SAVED: SessionManager.driverId = ${SessionManager.driverId}")
+                    }
 
                     onResult(
                         true,
                         loginResponse?.message ?: "",
-                        loginResponse?.driverId ?: -1
+                        driverId
                     )
 
                 } else {
-
+                    Log.e("LOGIN_FLOW", "Login Failed: ${response.message()}")
                     onResult(
                         false,
                         "Login Failed",
@@ -47,7 +55,7 @@ class DriverLoginViewModel : ViewModel() {
                 }
 
             } catch (e: Exception) {
-
+                Log.e("LOGIN_FLOW", "Login Error", e)
                 onResult(
                     false,
                     e.message ?: "Unknown Error",

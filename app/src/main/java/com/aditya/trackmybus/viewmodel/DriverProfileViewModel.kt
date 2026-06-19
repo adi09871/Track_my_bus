@@ -1,5 +1,6 @@
 package com.aditya.trackmybus.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -22,6 +23,7 @@ class DriverProfileViewModel : ViewModel() {
         private set
 
     fun fetchProfile(driverId: Long) {
+        Log.d("PROFILE_FLOW", "PROFILE_LOAD_STARTED: driverId = $driverId")
         viewModelScope.launch {
             isLoading = true
             error = null
@@ -31,6 +33,7 @@ class DriverProfileViewModel : ViewModel() {
                     val data = response.body()
                     if (data != null) {
                         profileData = data
+                        Log.d("PROFILE_FLOW", "PROFILE_LOAD_SUCCESS")
                     } else {
                         error = "No profile data found"
                     }

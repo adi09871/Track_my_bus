@@ -30,9 +30,15 @@ fun DriverProfileScreen(
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
 
+    // Use a derived state to ensure reactivity if driverId changes
+    val driverId by remember { derivedStateOf { SessionManager.driverId } }
+
     LaunchedEffect(Unit) {
-        if (SessionManager.driverId != -1L) {
-            viewModel.fetchProfile(SessionManager.driverId)
+        android.util.Log.d("PROFILE_FLOW", "PROFILE_SCREEN_OPENED: driverId read as $driverId")
+        if (driverId != -1L) {
+            viewModel.fetchProfile(driverId)
+        } else {
+            android.util.Log.e("PROFILE_FLOW", "DriverProfileScreen: driverId is -1L")
         }
     }
 
@@ -64,12 +70,36 @@ fun DriverProfileScreen(
                 .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
         ) {
-            if (SessionManager.driverId == -1L) {
-                Text(
-                    text = "Please log in to view your profile",
+            if (driverId == -1L) {
+                Column(
                     modifier = Modifier.align(Alignment.Center),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        Icons.Default.ErrorOutline,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Session Error: Driver ID missing",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "Please log in again to refresh your session",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp)
+                    )
+                    Button(
+                        onClick = onLogoutClick,
+                        modifier = Modifier.padding(top = 16.dp)
+                    ) {
+                        Text("Go to Login")
+                    }
+                }
             } else if (viewModel.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),

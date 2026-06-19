@@ -36,6 +36,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        SessionManager.init(this)
         ThemeManager.init(this)
         FirebaseMessaging.getInstance().token
             .addOnCompleteListener { task ->
@@ -210,6 +211,7 @@ class MainActivity : ComponentActivity() {
                             onTrackClick = { navController.navigate("bustracking") },
                             onAlertsClick = { navController.navigate("alerts") },
                             onLogoutClick = {
+                                SessionManager.clear()
                                 navController.navigate("optionscreen") {
                                     popUpTo(0) { inclusive = true }
                                 }
@@ -239,6 +241,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             },
                             onLogoutClick = {
+                                SessionManager.clear()
                                 navController.navigate("optionscreen") {
                                     popUpTo(0) { inclusive = true }
                                 }

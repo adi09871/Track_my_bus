@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aditya.trackmybus.R
 import com.aditya.trackmybus.model.SaveTokenRequest
-import com.aditya.trackmybus.session.SessionManager
 import com.aditya.trackmybus.viewmodel.AuthRepository
 import com.aditya.trackmybus.viewmodel.StudentLoginViewModel
 import com.google.firebase.messaging.FirebaseMessaging
@@ -59,9 +58,6 @@ fun StudentLogin(onBackClick: () -> Unit, onLoginSuccess: () -> Unit, onSignupCl
             message = successMessage,
             onConfirm = {
                 showSuccessDialog = false
-                SessionManager.studentId = loggedStudentId
-                SessionManager.studentName = loggedStudentName
-                SessionManager.busId = loggedBusId
                 onLoginSuccess()
             }
         )
