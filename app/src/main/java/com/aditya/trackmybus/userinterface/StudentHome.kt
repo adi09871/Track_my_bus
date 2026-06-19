@@ -39,9 +39,6 @@ fun StudentHome(
     val viewModel: StudentHomeViewModel = viewModel()
 
     val bus by viewModel.bus
-    LaunchedEffect(Unit) {
-        viewModel.loadBus()
-    }
     Scaffold(
         bottomBar = {
             NavigationBar(

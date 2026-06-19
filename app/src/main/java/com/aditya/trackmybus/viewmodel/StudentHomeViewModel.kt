@@ -14,25 +14,35 @@ class StudentHomeViewModel : ViewModel() {
         private set
     var totalStops = mutableStateOf(0)
         private set
+    var isLoading = mutableStateOf(false)
+        private set
+    var error = mutableStateOf<String?>(null)
+        private set
+
+    init {
+        loadBus()
+    }
 
     fun loadBus() {
         viewModelScope.launch {
+            isLoading.value = true
+            error.value = null
             try {
                 val response = RetrofitInstance.api.getBusById(SessionManager.busId)
                 if (response.isSuccessful) {
                     bus.value = response.body()
+                } else {
+                    error.value = "Failed to load bus details"
                 }
-            } catch (e: Exception) {
-                // Handle error
-            }
 
-            try {
                 val stopsResponse = RetrofitInstance.api.getStopsByBusId(SessionManager.busId)
                 if (stopsResponse.isSuccessful) {
                     totalStops.value = stopsResponse.body()?.size ?: 0
                 }
             } catch (e: Exception) {
-                // Handle error
+                error.value = e.message ?: "Unknown error"
+            } finally {
+                isLoading.value = false
             }
         }
     }

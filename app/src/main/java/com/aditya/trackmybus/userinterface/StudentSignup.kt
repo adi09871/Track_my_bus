@@ -49,11 +49,9 @@ fun StudentSignup(onBackClick: () -> Unit, onSignupSuccess: () -> Unit) {
     val viewModel: StudentSignupViewModel = viewModel()
     val busViewModel: BusViewModel = viewModel()
     val buses by busViewModel.buses.collectAsState()
+    val isBusesLoading by busViewModel.isLoading.collectAsState()
+    val busesError by busViewModel.error.collectAsState()
     val scrollState = rememberScrollState()
-
-    LaunchedEffect(Unit) {
-        busViewModel.loadBuses()
-    }
 
     if (showSuccessDialog) {
         BrandedDialog(
@@ -243,7 +241,7 @@ fun StudentSignup(onBackClick: () -> Unit, onSignupSuccess: () -> Unit) {
             Spacer(modifier = Modifier.height(8.dp))
             Box {
                 OutlinedTextField(
-                    value = selectedBus,
+                    value = if (isBusesLoading) "Loading buses..." else selectedBus,
                     onValueChange = {},
                     modifier = Modifier.fillMaxWidth(),
                     readOnly = true,
@@ -257,29 +255,42 @@ fun StudentSignup(onBackClick: () -> Unit, onSignupSuccess: () -> Unit) {
                         unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                     ),
                     trailingIcon = {
-                        IconButton(onClick = { expanded = true }) {
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        if (isBusesLoading) {
+                            CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                        } else {
+                            IconButton(onClick = { expanded = true }) {
+                                Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
                         }
                     }
                 )
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.fillMaxWidth(0.9f).background(MaterialTheme.colorScheme.surface)
-                ) {
-                    buses.forEach { bus ->
-                        DropdownMenuItem(
-                            text = { Text(bus.busNumber, color = MaterialTheme.colorScheme.onSurface) },
-                            onClick = {
-                                selectedBus = bus.busNumber
-                                selectedBusId = bus.id
-                                expanded = false
-                            }
-                        )
+                if (!isBusesLoading && buses.isNotEmpty()) {
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier.fillMaxWidth(0.9f).background(MaterialTheme.colorScheme.surface)
+                    ) {
+                        buses.forEach { bus ->
+                            DropdownMenuItem(
+                                text = { Text(bus.busNumber, color = MaterialTheme.colorScheme.onSurface) },
+                                onClick = {
+                                    selectedBus = bus.busNumber
+                                    selectedBusId = bus.id
+                                    expanded = false
+                                }
+                            )
+                        }
                     }
                 }
             }
-            if (selectedBus == "Select Bus" && !isBusValid && name.isNotEmpty()) {
+            if (busesError != null) {
+                Text(
+                    text = "Failed to load buses. Tap to retry.",
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(start = 12.dp, top = 4.dp).clickable { busViewModel.loadBuses() }
+                )
+            } else if (selectedBus == "Select Bus" && !isBusValid && name.isNotEmpty()) {
                 Text("Bus selection is required", color = MaterialTheme.colorScheme.error, fontSize = 12.sp, modifier = Modifier.padding(start = 12.dp, top = 4.dp))
             }
         }

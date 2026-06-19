@@ -18,14 +18,26 @@ class DriverHomeViewModel : ViewModel() {
         private set
     var stopsCount by mutableStateOf(0)
         private set
+    var isLoading by mutableStateOf(false)
+        private set
+    var error by mutableStateOf<String?>(null)
+        private set
+
+    init {
+        loadBus()
+    }
 
     fun loadBus() {
         viewModelScope.launch {
+            isLoading = true
+            error = null
             try {
                 val response = repository.getBusById(SessionManager.busId)
 
                 if (response.isSuccessful) {
                     bus = response.body()
+                } else {
+                    error = "Failed to load bus"
                 }
 
                 val stopsResponse = repository.getStopsByBusId(SessionManager.busId)
@@ -34,7 +46,9 @@ class DriverHomeViewModel : ViewModel() {
                 }
 
             } catch (e: Exception) {
-                // Handle error
+                error = e.message ?: "Unknown error"
+            } finally {
+                isLoading = false
             }
         }
     }

@@ -56,10 +56,6 @@ fun DriverHome(
             }
         }
 
-    LaunchedEffect(Unit) {
-        viewModel.loadBus()
-    }
-
     Scaffold(
         bottomBar = {
             DriverBottomBar(

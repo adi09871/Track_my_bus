@@ -18,15 +18,31 @@ class AddBusViewModel : ViewModel() {
     var busList by mutableStateOf<List<Bus>>(emptyList())
         private set
 
+    var isLoading by mutableStateOf(false)
+        private set
+
+    var error by mutableStateOf<String?>(null)
+        private set
+
+    init {
+        loadBuses()
+    }
+
     fun loadBuses() {
         viewModelScope.launch {
+            isLoading = true
+            error = null
             try {
                 val response = repository.getAllBuses()
                 if (response.isSuccessful) {
                     busList = response.body() ?: emptyList()
+                } else {
+                    error = "Failed to load buses: ${response.message()}"
                 }
             } catch (e: Exception) {
-                // Error loading buses
+                error = "Error: ${e.message ?: "Unknown error occurred"}"
+            } finally {
+                isLoading = false
             }
         }
     }

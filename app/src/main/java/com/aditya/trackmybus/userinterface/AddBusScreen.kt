@@ -53,11 +53,6 @@ fun AddBusScreen(
         )
     }
 
-
-    LaunchedEffect(Unit) {
-        viewModel.loadBuses()
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -244,7 +239,28 @@ fun AddBusScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            if (busList.isNotEmpty()) {
+            if (viewModel.isLoading) {
+                Box(modifier = Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                }
+            } else if (viewModel.error != null) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(text = "Failed to load buses", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onErrorContainer)
+                        Text(text = viewModel.error ?: "", fontSize = 14.sp, color = MaterialTheme.colorScheme.onErrorContainer)
+                        Button(
+                            onClick = { viewModel.loadBuses() },
+                            modifier = Modifier.padding(top = 8.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                        ) {
+                            Text("Retry", color = Color.White)
+                        }
+                    }
+                }
+            } else if (busList.isNotEmpty()) {
                 Text(
                     text = "Select bus",
                     fontSize = 18.sp,
