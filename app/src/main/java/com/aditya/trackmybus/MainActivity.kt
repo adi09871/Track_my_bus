@@ -1,5 +1,6 @@
 package com.aditya.trackmybus
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -44,12 +45,6 @@ class MainActivity : ComponentActivity() {
                 if (!task.isSuccessful) {
                     return@addOnCompleteListener
                 }
-
-                val token = task.result
-
-                println(
-                    "FCM TOKEN = $token"
-                )
             }
         enableEdgeToEdge()
         setContent {
@@ -116,8 +111,8 @@ class MainActivity : ComponentActivity() {
                         DriverSignup(
                             onBackClick = { navController.popBackStack() },
                             onSignupSuccess = {
-                                navController.navigate("addbus") {
-                                    popUpTo("optionscreen") { inclusive = true }
+                                navController.navigate("driverlogin") {
+                                    popUpTo("driversignup") { inclusive = true }
                                 }
                             }
                         )
@@ -212,8 +207,11 @@ class MainActivity : ComponentActivity() {
                             onAlertsClick = { navController.navigate("alerts") },
                             onLogoutClick = {
                                 SessionManager.clear()
+                                stopService(Intent(this@MainActivity, com.aditya.trackmybus.service.LocationForegroundService::class.java))
                                 navController.navigate("optionscreen") {
-                                    popUpTo(0) { inclusive = true }
+                                    popUpTo(navController.graph.id) {
+                                        inclusive = true
+                                    }
                                 }
                             }
                         )
@@ -225,7 +223,6 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("driverprofile") {
                                     popUpTo("driverhome") { saveState = true }
                                     launchSingleTop = true
-                                    restoreState = true
                                 }
                             }
                         )
@@ -242,8 +239,11 @@ class MainActivity : ComponentActivity() {
                             },
                             onLogoutClick = {
                                 SessionManager.clear()
+                                stopService(Intent(this@MainActivity, com.aditya.trackmybus.service.LocationForegroundService::class.java))
                                 navController.navigate("optionscreen") {
-                                    popUpTo(0) { inclusive = true }
+                                    popUpTo(navController.graph.id) {
+                                        inclusive = true
+                                    }
                                 }
                             }
                         )

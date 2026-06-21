@@ -25,22 +25,19 @@ import com.aditya.trackmybus.viewmodel.DriverProfileViewModel
 @Composable
 fun DriverProfileScreen(
     onBusClick: () -> Unit,
-    onLogoutClick: () -> Unit,
-    viewModel: DriverProfileViewModel = viewModel()
+    onLogoutClick: () -> Unit
 ) {
-    android.util.Log.d("PROFILE_FLOW", "PROFILE_COMPOSED")
-    var showLogoutDialog by remember { mutableStateOf(false) }
-
     // Read directly from SessionManager to get the latest value on each recomposition
     val currentDriverId = SessionManager.driverId
-    android.util.Log.d("PROFILE_FLOW", "CURRENT_DRIVER_ID: $currentDriverId")
+
+    // Scoping ViewModel to driverId ensures we get a fresh one when account switches
+    val viewModel: DriverProfileViewModel = viewModel(key = "driver_profile_$currentDriverId")
+
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(currentDriverId) {
         if (currentDriverId != -1L) {
-            android.util.Log.d("PROFILE_FLOW", "PROFILE_FETCH_TRIGGERED: $currentDriverId")
             viewModel.fetchProfile(currentDriverId)
-        } else {
-            android.util.Log.e("PROFILE_FLOW", "DriverProfileScreen: driverId is -1L")
         }
     }
 
@@ -128,7 +125,7 @@ fun DriverProfileScreen(
                         Text("Retry", color = Color.White)
                     }
                 }
-            } else if (viewModel.profileData != null) {
+            } else if (viewModel.profileData != null && viewModel.profileData?.id == currentDriverId) {
                 val driver = viewModel.profileData!!
                 
                 Column(

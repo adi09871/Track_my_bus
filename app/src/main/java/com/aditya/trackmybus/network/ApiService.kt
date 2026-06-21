@@ -7,6 +7,7 @@ import com.aditya.trackmybus.model.DriverLoginRequest
 import com.aditya.trackmybus.model.DriverLoginResponse
 import com.aditya.trackmybus.model.DriverProfileResponse
 import com.aditya.trackmybus.model.DriverRegisterRequest
+import com.aditya.trackmybus.model.DriverRegisterResponse
 import com.aditya.trackmybus.model.LocationUpdateRequest
 import com.aditya.trackmybus.model.NotificationResponse
 import com.aditya.trackmybus.model.SaveStopsRequest

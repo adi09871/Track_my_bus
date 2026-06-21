@@ -1,6 +1,8 @@
 package com.aditya.trackmybus.viewmodel
 
-import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aditya.trackmybus.model.DriverLoginRequest
@@ -10,17 +12,22 @@ import kotlinx.coroutines.launch
 class DriverLoginViewModel : ViewModel() {
 
     private val repository = AuthRepository()
+    
+    var isLoading by mutableStateOf(false)
+        private set
 
     fun login(
         email: String,
         password: String,
         onResult: (Boolean, String, Long) -> Unit
     ) {
+        if (isLoading) {
+            return
+        }
 
         viewModelScope.launch {
-
+            isLoading = true
             try {
-
                 val response =
                     repository.driverLogin(
                         DriverLoginRequest(
@@ -31,36 +38,34 @@ class DriverLoginViewModel : ViewModel() {
 
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
-                    val driverId = loginResponse?.driverId ?: -1L
+                    val idFromBackend = loginResponse?.driverId ?: -1L
                     
-                    if (driverId != -1L) {
-                        SessionManager.driverId = driverId
-                        Log.d("LOGIN_FLOW", "LOGIN_SUCCESS: driverId = $driverId")
-                        Log.d("LOGIN_FLOW", "DRIVER_ID_SAVED: SessionManager.driverId = ${SessionManager.driverId}")
+                    if (idFromBackend != -1L) {
+                        SessionManager.driverId = idFromBackend
                     }
 
                     onResult(
                         true,
                         loginResponse?.message ?: "",
-                        driverId
+                        idFromBackend
                     )
 
                 } else {
-                    Log.e("LOGIN_FLOW", "Login Failed: ${response.message()}")
                     onResult(
                         false,
                         "Login Failed",
-                        -1
+                        -1L
                     )
                 }
 
             } catch (e: Exception) {
-                Log.e("LOGIN_FLOW", "Login Error", e)
                 onResult(
                     false,
                     e.message ?: "Unknown Error",
-                    -1
+                    -1L
                 )
+            } finally {
+                isLoading = false
             }
         }
     }

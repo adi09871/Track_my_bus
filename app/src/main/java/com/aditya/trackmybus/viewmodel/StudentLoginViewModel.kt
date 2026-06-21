@@ -1,6 +1,5 @@
 package com.aditya.trackmybus.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aditya.trackmybus.model.StudentLoginRequest
@@ -45,8 +44,6 @@ class StudentLoginViewModel : ViewModel() {
                         SessionManager.studentName = student.name
                         SessionManager.busId = student.busId ?: -1L
                         
-                        Log.d("LOGIN_FLOW", "STUDENT_LOGIN_SUCCESS: studentId = ${student.id}")
-
                         onResult(
                             true,
                             "Login Successful!",

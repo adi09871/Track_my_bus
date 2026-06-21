@@ -33,9 +33,11 @@ class DriverSignupViewModel : ViewModel() {
                 )
 
                 if (response.isSuccessful) {
-                    onResult(true, response.body() ?: "Registration Successful")
+                    val body = response.body()
+                    onResult(true, body ?: "Registration Successful")
                 } else {
-                    onResult(false, "Registration Failed")
+                    val rawError = response.errorBody()?.string()
+                    onResult(false, rawError ?: "Registration Failed")
                 }
             } catch (e: Exception) {
                 onResult(false, e.message ?: "Unknown Error")

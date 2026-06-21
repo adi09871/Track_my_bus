@@ -331,14 +331,15 @@ fun DriverHome(
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
+                                    val tripStarted = bus.isTripActive
                                     Surface(
                                         modifier = Modifier.size(6.dp),
-                                        color = if (bus.isTripActive) Color.Green else MaterialTheme.colorScheme.onSurfaceVariant,
+                                        color = if (tripStarted) Color.Green else MaterialTheme.colorScheme.onSurfaceVariant,
                                         shape = CircleShape
                                     ) {}
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Text(
-                                        text = if (bus.isTripActive) "Trip started" else "Trip not started",
+                                        text = if (tripStarted) "Trip started" else "Trip not started",
                                         fontSize = 12.sp,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -388,6 +389,7 @@ fun DriverHome(
                             Button(
                                 onClick = {
                                     viewModel.stopTrip()
+                                    context.stopService(Intent(context, LocationForegroundService::class.java))
                                 },
                                 modifier = Modifier
                                     .weight(1f)

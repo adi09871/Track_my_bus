@@ -130,7 +130,6 @@ class LocationForegroundService : Service() {
             )
 
         } catch (_: SecurityException) {
-            // Location permission error
         }
     }
 
