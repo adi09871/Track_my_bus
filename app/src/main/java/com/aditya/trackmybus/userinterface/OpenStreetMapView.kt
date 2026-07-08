@@ -1,6 +1,7 @@
 package com.aditya.trackmybus.userinterface
 
 import android.content.Context
+import android.util.Log
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.view.ViewGroup
@@ -44,6 +45,10 @@ fun OpenStreetMapView(
             }
         },
         update = { mapView ->
+            Log.d(
+                "MAP_DEBUG",
+                "MAP_RENDER lat=$latitude lng=$longitude"
+            )
             val busPoint = GeoPoint(latitude, longitude)
 
             // Center logic

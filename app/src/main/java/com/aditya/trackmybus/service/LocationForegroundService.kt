@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.aditya.trackmybus.R
@@ -40,6 +41,7 @@ class LocationForegroundService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        Log.d("TRIP_DEBUG", "LOCATION_SERVICE_CREATED")
 
         createNotificationChannel()
 
@@ -57,7 +59,7 @@ class LocationForegroundService : Service() {
                 override fun onLocationResult(
                     locationResult: LocationResult
                 ) {
-
+                    Log.d("TRIP_DEBUG", "LOCATION_CALLBACK_TRIGGERED")
                     locationResult.lastLocation?.let { location ->
 
                         updateBusLocation(
@@ -67,8 +69,6 @@ class LocationForegroundService : Service() {
                     }
                 }
             }
-
-        startLocationUpdates()
     }
 
     override fun onStartCommand(
@@ -76,6 +76,10 @@ class LocationForegroundService : Service() {
         flags: Int,
         startId: Int
     ): Int {
+        Log.d("TRIP_DEBUG", "LOCATION_SERVICE_ON_START_COMMAND: startId=$startId")
+        
+        // Ensure tracking is active when service is started/restarted
+        startLocationUpdates()
 
         return START_STICKY
     }
@@ -90,27 +94,35 @@ class LocationForegroundService : Service() {
         if (busId == -1L) {
             return
         }
+        
+        Log.d("TRIP_DEBUG", "LOCATION_SENT_TO_API: lat=$latitude, lon=$longitude")
 
         serviceScope.launch {
 
             try {
 
-                repository.updateLocation(
+                val response = repository.updateLocation(
                     LocationUpdateRequest(
                         busId = busId,
                         latitude = latitude,
                         longitude = longitude
                     )
                 )
+                
+                if (response.isSuccessful) {
+                    Log.d("TRIP_DEBUG", "LOCATION_UPLOAD_SUCCESS")
+                } else {
+                    Log.e("TRIP_DEBUG", "LOCATION_UPLOAD_FAILED: ${response.message()}")
+                }
 
-            } catch (_: Exception) {
-                // Location update failed
+            } catch (e: Exception) {
+                Log.e("TRIP_DEBUG", "LOCATION_UPLOAD_EXCEPTION", e)
             }
         }
     }
 
     private fun startLocationUpdates() {
-
+        Log.d("TRIP_DEBUG", "REQUEST_LOCATION_UPDATES_START")
         val locationRequest =
             LocationRequest.Builder(
                 Priority.PRIORITY_HIGH_ACCURACY,
@@ -128,18 +140,32 @@ class LocationForegroundService : Service() {
                 locationCallback,
                 Looper.getMainLooper()
             )
+            Log.d("TRIP_DEBUG", "REQUEST_LOCATION_UPDATES_SUCCESS")
 
-        } catch (_: SecurityException) {
+        } catch (e: SecurityException) {
+            Log.e("TRIP_DEBUG", "REQUEST_LOCATION_UPDATES_SECURITY_EXCEPTION", e)
+        } catch (e: Exception) {
+            Log.e("TRIP_DEBUG", "REQUEST_LOCATION_UPDATES_EXCEPTION", e)
         }
     }
 
     override fun onDestroy() {
-
-        fusedLocationClient.removeLocationUpdates(
-            locationCallback
-        )
+        Log.d("TRIP_DEBUG", "LOCATION_SERVICE_DESTROY_START")
+        
+        Log.d("TRIP_DEBUG", "REMOVE_LOCATION_UPDATES")
+        if (::fusedLocationClient.isInitialized && ::locationCallback.isInitialized) {
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+        }
 
         serviceScope.coroutineContext.cancel()
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        } else {
+            stopForeground(true)
+        }
+
+        Log.d("TRIP_DEBUG", "LOCATION_SERVICE_DESTROYED_COMPLETE")
 
         super.onDestroy()
     }

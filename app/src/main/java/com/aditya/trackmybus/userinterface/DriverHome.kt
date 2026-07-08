@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aditya.trackmybus.R
+import android.util.Log
+import com.aditya.trackmybus.session.SessionManager
 import com.aditya.trackmybus.service.LocationForegroundService
 import com.aditya.trackmybus.viewmodel.DriverHomeViewModel
 
@@ -45,14 +47,29 @@ fun DriverHome(
     val stopsCount = viewModel.stopsCount
     val context = LocalContext.current
 
+    LaunchedEffect(Unit) {
+        viewModel.loadBus()
+    }
+
     val locationPermissionLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission()
         ) { isGranted ->
+            Log.d("TRIP_DEBUG", "CHECK_PERMISSION (from launcher)")
             if (isGranted) {
-                viewModel.startTrip()
-                val intent = Intent(context, LocationForegroundService::class.java)
-                ContextCompat.startForegroundService(context, intent)
+                Log.d("TRIP_DEBUG", "PERMISSION_GRANTED (from launcher)")
+                Log.d("TRIP_DEBUG", "START_TRIP_CLICKED (from launcher)")
+                viewModel.startTrip { success ->
+                    Log.d("TRIP_DEBUG", "VIEWMODEL_START_TRIP_RESULT success=$success")
+                    if (success) {
+                        Log.d("TRIP_DEBUG", "ABOUT_TO_START_SERVICE")
+                        val intent = Intent(context, LocationForegroundService::class.java)
+                        ContextCompat.startForegroundService(context, intent)
+                        Log.d("TRIP_DEBUG", "START_LOCATION_SERVICE")
+                    }
+                }
+            } else {
+                Log.d("TRIP_DEBUG", "PERMISSION_DENIED (from launcher)")
             }
         }
 
@@ -355,16 +372,28 @@ fun DriverHome(
                         ) {
                             Button(
                                 onClick = {
+                                    Log.d("TRIP_DEBUG", "START_TRIP_CLICKED")
+                                    Log.d("TRIP_DEBUG", "CHECK_PERMISSION")
                                     if (ContextCompat.checkSelfPermission(
                                             context,
                                             Manifest.permission.ACCESS_FINE_LOCATION
                                         ) == PackageManager.PERMISSION_GRANTED
                                     ) {
-                                        viewModel.startTrip()
-                                        val intent =
-                                            Intent(context, LocationForegroundService::class.java)
-                                        ContextCompat.startForegroundService(context, intent)
+                                        Log.d("TRIP_DEBUG", "PERMISSION_GRANTED")
+                                        Log.d("TRIP_DEBUG", "CHECK_BUS_ID")
+                                        Log.d("TRIP_DEBUG", "BUS_ID=${SessionManager.busId}")
+                                        
+                                        viewModel.startTrip { success ->
+                                            Log.d("TRIP_DEBUG", "VIEWMODEL_START_TRIP_RESULT success=$success")
+                                            if (success) {
+                                                Log.d("TRIP_DEBUG", "START_LOCATION_SERVICE")
+                                                val intent =
+                                                    Intent(context, LocationForegroundService::class.java)
+                                                ContextCompat.startForegroundService(context, intent)
+                                            }
+                                        }
                                     } else {
+                                        Log.d("TRIP_DEBUG", "PERMISSION_NEEDED: Launching request")
                                         locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                                     }
                                 },
@@ -375,21 +404,31 @@ fun DriverHome(
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = MaterialTheme.colorScheme.primary
                                 ),
-                                enabled = !bus.isTripActive
+                                enabled = bus != null && !bus.isTripActive && !viewModel.isTripOperationLoading
                             ) {
-                                Icon(Icons.Default.PlayArrow, null, tint = Color.White)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "Start trip",
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
+                                if (viewModel.isTripOperationLoading && !bus!!.isTripActive) {
+                                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
+                                } else {
+                                    Icon(Icons.Default.PlayArrow, null, tint = Color.White)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "Start trip",
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                }
                             }
 
                             Button(
                                 onClick = {
-                                    viewModel.stopTrip()
+                                    Log.d("TRIP_DEBUG", "STOP_TRIP_CLICKED")
+                                    // Always stop local tracking immediately for driver privacy and battery
+                                    Log.d("TRIP_DEBUG", "STOP_LOCATION_SERVICE_LOCAL")
                                     context.stopService(Intent(context, LocationForegroundService::class.java))
+                                    
+                                    viewModel.stopTrip { _ ->
+                                        // Backend sync status handled by ViewModel
+                                    }
                                 },
                                 modifier = Modifier
                                     .weight(1f)
@@ -398,19 +437,23 @@ fun DriverHome(
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color(0xFFFFB2B2)
                                 ),
-                                enabled = bus.isTripActive
+                                enabled = bus != null && bus.isTripActive && !viewModel.isTripOperationLoading
                             ) {
-                                Icon(
-                                    Icons.Default.Stop,
-                                    null,
-                                    tint = Color.White
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "Stop trip",
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold
-                                )
+                                if (viewModel.isTripOperationLoading && bus!!.isTripActive) {
+                                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
+                                } else {
+                                    Icon(
+                                        Icons.Default.Stop,
+                                        null,
+                                        tint = Color.White
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "Stop trip",
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
                             }
                         }
                     }
